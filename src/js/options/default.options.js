@@ -5,11 +5,12 @@ export default {
  
     //default settings for options
     parentEl: 'body',
+    dateLibrary: null,
     element: null,
     startDate: null,
     endDate: null,
-    minDate: false,
-    maxDate: false,
+    minDate: null,
+    maxDate: null,
     maxSpan: false,
     autoApply: false,
     singleDatePicker: false,
@@ -26,12 +27,13 @@ export default {
     linkedCalendars: true,
     autoUpdateInput: true,
     alwaysShowCalendars : false,
+    callback: function() { console.log('Hamonica DateRangePicker callback ... ') ;},
     ranges : {},
     
     buttonClasses: 'btn btn-sm',
     applyButtonClasses: 'btn-primary',
     cancelButtonClasses: 'btn-default',
 
-    opens: null,
-    drops: null
+    opens: 'right',
+    drops: 'down'
 }
