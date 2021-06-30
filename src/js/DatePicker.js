@@ -8,6 +8,10 @@ import "moment/locale/es-us";
 
 moment.locale("ko");
 
+function createFragment(markup) {
+    const fragment = document.createRange().createContextualFragment(markup);
+    return fragment.firstElementChild;
+}
 class DatePicker {
     
     /**
@@ -103,8 +107,16 @@ class DatePicker {
         let parentEl = document.querySelectorAll(this.#options.parentEl);
 
         this.#parentEl = (parentEl != null && parentEl.length > 0) ? parentEl[0] : null;
-    
-        this.#container = this.#parentEl.insertAdjacentHTML('beforeend', this.#options.template);
+           
+        this.#container = createFragment(this.#options.template);
+        // render performance...
+        var fragment = document.createDocumentFragment();
+        fragment.appendChild(this.#container);
+
+        this.#parentEl.appendChild(fragment);
+
+        //컨테이너가 위치할 방향 설정.
+        this.#container.classList.add(this.#locale.direction);
     }
 
 
@@ -142,18 +154,17 @@ class DatePicker {
             this.#locale.locale.customRangeLabel = rangeHtml;
         }
     
-        //컨테이너가 위치할 방향 설정.
-        this.container.classList.add(this.#locale.direction);
+        this.#initContainer();
 
         if (typeof options.applyClass === 'string'){ //backwards compat
-            this.applyButtonClasses = options.applyClass;
+            this.#options.applyButtonClasses = options.applyClass;
         }
         if (typeof options.cancelClass === 'string') { //backwards compat
-            this.cancelButtonClasses = options.cancelClass;
+            this.#options.cancelButtonClasses = options.cancelClass;
         }
 
         if (typeof options.buttonClasses === 'object') {
-            this.buttonClasses = options.buttonClasses.join(' ');
+            this.#options.buttonClasses = options.buttonClasses.join(' ');
         }
 
         //단독으로 달력이 펼쳐질 경우 종료날짜를 시작날짜로 맞춤.
@@ -162,8 +173,8 @@ class DatePicker {
         }
 
         // update day names order to firstDay
-        if (this.locale.firstDay != 0) {
-            var iterator = this.locale.firstDay;
+        if (this.#locale.firstDay != 0) {
+            var iterator = this.#locale.firstDay;
             while (iterator > 0) {
                 this.#locale.daysOfWeek.push(this.#locale.daysOfWeek.shift());
                 iterator--;
@@ -206,14 +217,14 @@ class DatePicker {
 
         // sanity check for bad options
         // 최소 날짜가 시작 날짜보다 이전이라면 시작 날짜를 최소 날짜로 설정.
-        if (this.minDate && this.startDate.isBefore(this.minDate)){
-            this.startDate = this.minDate.clone();
+        if (this.#options.minDate && this.#options.startDate.isBefore( this.#options.minDate)){
+            this.#options.startDate =  this.#options.minDate.clone();
         }
     
         // sanity check for bad options
         // 종료 날짜가 촤대 날짜보다 이후라면 시작 날짜를 최대 날짜로 설정.
-        if (this.maxDate && this.endDate.isAfter(this.maxDate)){
-            this.endDate = this.maxDate.clone();
+        if ( this.#options.maxDate &&  this.#options.endDate.isAfter( this.#options.maxDate)){
+            this.#options.endDate =  this.#options.maxDate.clone();
         }
     
         var start, end, range;
@@ -244,14 +255,14 @@ class DatePicker {
     
     updateElement = ()  => {
         //input 엘리먼트이고 autoUpdateInput 설정이 true일 경우 처리 한다.
-        if (this.element === HTMLInputElement && this.autoUpdateInput) {
-            var newValue = this.startDate.format(this.locale.format);
-            if (!this.singleDatePicker) {
-                newValue += this.locale.separator + this.endDate.format(this.locale.format);
+        if (this.#element === HTMLInputElement && this.autoUpdateInput) {
+            var newValue =  this.#options.startDate.format(this.locale.format);
+            if (! this.#options.singleDatePicker) {
+                newValue += this.#locale.separator +  this.#options.endDate.format(this.#locale.format);
             }
             //신규 값과 Input 엘리먼트에 등록된 값이 다를 경우 change이벤트를 발생 시킨다.
-            if (newValue !== this.element.val()) {
-                this.element.value = newValue;
+            if (newValue !== this.#element.val()) {
+                this.#element.value = newValue;
 
                 //@TODO 이벤트 trigger 이벤트 추가 하여야함.
                 
@@ -260,9 +271,9 @@ class DatePicker {
     }
 
     remove = () => {
-        this.container.remove();
-        this.element.off('.daterangepicker');
-        this.element.removeData();
+        this.#container.remove();
+        this.#element.off('.daterangepicker');
+        this.#element.removeData();
     }
 
     setStartDate = (startDate) => {

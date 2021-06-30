@@ -38384,21 +38384,21 @@ __webpack_require__.d(__webpack_exports__, {
   buttonClasses: 'btn btn-sm',
   applyButtonClasses: 'btn-primary',
   cancelButtonClasses: 'btn-default',
-  opens: null,
-  drops: null
+  opens: 'right',
+  drops: 'down'
 });
 ;// CONCATENATED MODULE: ./src/js/options/default.locale.js
 /* harmony default export */ const default_locale = ({
   direction: 'ltr',
   format: null,
   separator: ' - ',
+  daysOfWeek: null,
+  monthNames: null,
+  firstDay: null,
   applyLabel: 'Apply',
   cancelLabel: 'Cancel',
   weekLabel: 'W',
-  customRangeLabel: 'Custom Range',
-  daysOfWeek: null,
-  monthNames: null,
-  firstDay: null
+  customRangeLabel: 'Custom Range'
 });
 // EXTERNAL MODULE: ./node_modules/lodash/lodash.js
 var lodash = __webpack_require__(6486);
@@ -38424,20 +38424,20 @@ var util = {
       if (_typeof(options[field]) === 'object') {
         options[field] = moment(options[field]);
       }
-
-      console.log("options.startDate @# ", options[field], _typeof(options[field]), field);
     }
   }
 };
 /* harmony default export */ const util_date = (util);
 // EXTERNAL MODULE: ./node_modules/moment/moment.js
-var moment = __webpack_require__(381);
-var moment_default = /*#__PURE__*/__webpack_require__.n(moment);
+var moment_moment = __webpack_require__(381);
+var moment_default = /*#__PURE__*/__webpack_require__.n(moment_moment);
 // EXTERNAL MODULE: ./node_modules/moment/locale/ko.js
 var ko = __webpack_require__(3730);
 // EXTERNAL MODULE: ./node_modules/moment/locale/es-us.js
 var es_us = __webpack_require__(1146);
 ;// CONCATENATED MODULE: ./src/js/DatePicker.js
+function DatePicker_typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { DatePicker_typeof = function _typeof(obj) { return typeof obj; }; } else { DatePicker_typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return DatePicker_typeof(obj); }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
@@ -38461,6 +38461,11 @@ function _classApplyDescriptorSet(receiver, descriptor, value) { if (descriptor.
 
 moment_default().locale("ko");
 
+function createFragment(markup) {
+  var fragment = document.createRange().createContextualFragment(markup);
+  return fragment.firstElementChild;
+}
+
 var _parentEl = /*#__PURE__*/new WeakMap();
 
 var _container = /*#__PURE__*/new WeakMap();
@@ -38470,6 +38475,14 @@ var _options = /*#__PURE__*/new WeakMap();
 var _locale = /*#__PURE__*/new WeakMap();
 
 var _element = /*#__PURE__*/new WeakMap();
+
+var _isShowing = /*#__PURE__*/new WeakMap();
+
+var _leftCalendar = /*#__PURE__*/new WeakMap();
+
+var _rightCalendar = /*#__PURE__*/new WeakMap();
+
+var _previousRightTime = /*#__PURE__*/new WeakMap();
 
 var _initContainer = /*#__PURE__*/new WeakMap();
 
@@ -38499,6 +38512,7 @@ var DatePicker =
 /**
  * 대상 input Element
  */
+//some state information
 function DatePicker(element, _options2, cb) {
   var _this = this;
 
@@ -38529,6 +38543,50 @@ function DatePicker(element, _options2, cb) {
     value: void 0
   });
 
+  _isShowing.set(this, {
+    writable: true,
+    value: false
+  });
+
+  _leftCalendar.set(this, {
+    writable: true,
+    value: {}
+  });
+
+  _rightCalendar.set(this, {
+    writable: true,
+    value: {}
+  });
+
+  _previousRightTime.set(this, {
+    writable: true,
+    value: void 0
+  });
+
+  _defineProperty(this, "getElement", function () {
+    return _classPrivateFieldGet(_this, _element);
+  });
+
+  _defineProperty(this, "getOptions", function () {
+    return _classPrivateFieldGet(_this, _options);
+  });
+
+  _defineProperty(this, "getLocale", function () {
+    return _classPrivateFieldGet(_this, _locale);
+  });
+
+  _defineProperty(this, "isShowing", function () {
+    return _classPrivateFieldGet(_this, _isShowing);
+  });
+
+  _defineProperty(this, "getLeftCalendar", function () {
+    return _classPrivateFieldGet(_this, _leftCalendar);
+  });
+
+  _defineProperty(this, "getRightCalendar", function () {
+    return _classPrivateFieldGet(_this, _rightCalendar);
+  });
+
   _initContainer.set(this, {
     writable: true,
     value: function value() {
@@ -38541,7 +38599,16 @@ function DatePicker(element, _options2, cb) {
 
       _classPrivateFieldSet(_this, _parentEl, parentEl != null && parentEl.length > 0 ? parentEl[0] : null);
 
-      _classPrivateFieldSet(_this, _container, _classPrivateFieldGet(_this, _parentEl).insertAdjacentHTML('beforeend', _classPrivateFieldGet(_this, _options).template));
+      _classPrivateFieldSet(_this, _container, createFragment(_classPrivateFieldGet(_this, _options).template)); // render performance...
+
+
+      var fragment = document.createDocumentFragment();
+      fragment.appendChild(_classPrivateFieldGet(_this, _container));
+
+      _classPrivateFieldGet(_this, _parentEl).appendChild(fragment); //컨테이너가 위치할 방향 설정.
+
+
+      _classPrivateFieldGet(_this, _container).classList.add(_classPrivateFieldGet(_this, _locale).direction);
     }
   });
 
@@ -38569,9 +38636,49 @@ function DatePicker(element, _options2, cb) {
         daysOfWeek: moment_default()().localeData().weekdaysMin(),
         monthNames: moment_default()().localeData().monthsShort(),
         firstDay: moment_default()().localeData().firstDayOfWeek()
-      }, options.locale));
+      }, options.locale)); // handle all the possible options overriding defaults
 
-      console.log("moment().startOf('day') ", moment_default()().startOf('day')); //레이아웃 설정.
+
+      if (typeof options.locale.customRangeLabel === 'string') {
+        //Support unicode chars in the custom range name.
+        var elem = document.createElement('textarea');
+        elem.innerHTML = options.locale.customRangeLabel;
+        var rangeHtml = elem.value;
+        _classPrivateFieldGet(_this, _locale).locale.customRangeLabel = rangeHtml;
+      }
+
+      _classPrivateFieldGet(_this, _initContainer).call(_this);
+
+      if (typeof options.applyClass === 'string') {
+        //backwards compat
+        _classPrivateFieldGet(_this, _options).applyButtonClasses = options.applyClass;
+      }
+
+      if (typeof options.cancelClass === 'string') {
+        //backwards compat
+        _classPrivateFieldGet(_this, _options).cancelButtonClasses = options.cancelClass;
+      }
+
+      if (DatePicker_typeof(options.buttonClasses) === 'object') {
+        _classPrivateFieldGet(_this, _options).buttonClasses = options.buttonClasses.join(' ');
+      } //단독으로 달력이 펼쳐질 경우 종료날짜를 시작날짜로 맞춤.
+
+
+      if (_classPrivateFieldGet(_this, _options).singleDatePicker === true) {
+        _classPrivateFieldGet(_this, _options).endDate = _classPrivateFieldGet(_this, _options).startDate.clone();
+      } // update day names order to firstDay
+
+
+      if (_classPrivateFieldGet(_this, _locale).firstDay != 0) {
+        var iterator = _classPrivateFieldGet(_this, _locale).firstDay;
+
+        while (iterator > 0) {
+          _classPrivateFieldGet(_this, _locale).daysOfWeek.push(_classPrivateFieldGet(_this, _locale).daysOfWeek.shift());
+
+          iterator--;
+        }
+      } //레이아웃 설정.
+
 
       _classPrivateFieldGet(_this, _initContainer).call(_this); // 달력창 여는 방향 설정 항목을 초기화 한다.
 
@@ -38586,13 +38693,9 @@ function DatePicker(element, _options2, cb) {
   _initOpensAndDrops.set(this, {
     writable: true,
     value: function value() {
-      _classPrivateFieldGet(_this, _options).opens = 'right';
-
       if (_classPrivateFieldGet(_this, _element).classList.contains('pull-right')) {
         _classPrivateFieldGet(_this, _options).opens = 'left';
       }
-
-      _classPrivateFieldGet(_this, _options).drops = 'down';
 
       if (_classPrivateFieldGet(_this, _element).classList.contains('dropup')) {
         _classPrivateFieldGet(_this, _options).drops = 'up';
@@ -38609,35 +38712,129 @@ function DatePicker(element, _options2, cb) {
       util_date.date.setDate((moment_default()), _classPrivateFieldGet(_this, _options), _classPrivateFieldGet(_this, _locale), 'maxDate'); // sanity check for bad options
       // 최소 날짜가 시작 날짜보다 이전이라면 시작 날짜를 최소 날짜로 설정.
 
-      if (_this.minDate && _this.startDate.isBefore(_this.minDate)) _this.startDate = _this.minDate.clone(); // sanity check for bad options
+      if (_classPrivateFieldGet(_this, _options).minDate && _classPrivateFieldGet(_this, _options).startDate.isBefore(_classPrivateFieldGet(_this, _options).minDate)) {
+        _classPrivateFieldGet(_this, _options).startDate = _classPrivateFieldGet(_this, _options).minDate.clone();
+      } // sanity check for bad options
       // 종료 날짜가 촤대 날짜보다 이후라면 시작 날짜를 최대 날짜로 설정.
 
-      if (_this.maxDate && _this.endDate.isAfter(_this.maxDate)) _this.endDate = _this.maxDate.clone();
+
+      if (_classPrivateFieldGet(_this, _options).maxDate && _classPrivateFieldGet(_this, _options).endDate.isAfter(_classPrivateFieldGet(_this, _options).maxDate)) {
+        _classPrivateFieldGet(_this, _options).endDate = _classPrivateFieldGet(_this, _options).maxDate.clone();
+      }
+
+      var start, end, range; //if no start/end dates set, check if an input element contains initial values
+
+      if (typeof _classPrivateFieldGet(_this, _options).startDate === 'undefined' && typeof _classPrivateFieldGet(_this, _options).endDate === 'undefined') {
+        if (_classPrivateFieldGet(_this, _element) === HTMLInputElement && _classPrivateFieldGet(_this, _element).type == 'text') {
+          var val = _classPrivateFieldGet(_this, _element).value,
+              split = val.split(_classPrivateFieldGet(_this, _locale).separator);
+
+          start = end = null;
+
+          if (split.length == 2) {
+            start = moment_default()(split[0], _classPrivateFieldGet(_this, _locale).format);
+            end = moment_default()(split[1], _classPrivateFieldGet(_this, _locale).format);
+          } else if (_classPrivateFieldGet(_this, _options).singleDatePicker === true && val !== "") {
+            start = moment_default()(val, _classPrivateFieldGet(_this, _locale).format);
+            end = moment_default()(val, _classPrivateFieldGet(_this, _locale).format);
+          }
+
+          if (start !== null && end !== null) {
+            _this.setStartDate(start);
+
+            _this.setEndDate(end);
+          }
+        }
+      }
     }
   });
 
   _defineProperty(this, "updateElement", function () {
     //input 엘리먼트이고 autoUpdateInput 설정이 true일 경우 처리 한다.
-    if (_this.element === HTMLInputElement && _this.autoUpdateInput) {
-      var newValue = _this.startDate.format(_this.locale.format);
+    if (_classPrivateFieldGet(_this, _element) === HTMLInputElement && _this.autoUpdateInput) {
+      var newValue = _classPrivateFieldGet(_this, _options).startDate.format(_this.locale.format);
 
-      if (!_this.singleDatePicker) {
-        newValue += _this.locale.separator + _this.endDate.format(_this.locale.format);
+      if (!_classPrivateFieldGet(_this, _options).singleDatePicker) {
+        newValue += _classPrivateFieldGet(_this, _locale).separator + _classPrivateFieldGet(_this, _options).endDate.format(_classPrivateFieldGet(_this, _locale).format);
       } //신규 값과 Input 엘리먼트에 등록된 값이 다를 경우 change이벤트를 발생 시킨다.
 
 
-      if (newValue !== _this.element.val()) {
-        _this.element.value = newValue; //@TODO 이벤트 trigger 이벤트 추가 하여야함.
+      if (newValue !== _classPrivateFieldGet(_this, _element).val()) {
+        _classPrivateFieldGet(_this, _element).value = newValue; //@TODO 이벤트 trigger 이벤트 추가 하여야함.
       }
     }
   });
 
   _defineProperty(this, "remove", function () {
-    _this.container.remove();
+    _classPrivateFieldGet(_this, _container).remove();
 
-    _this.element.off('.daterangepicker');
+    _classPrivateFieldGet(_this, _element).off('.daterangepicker');
 
-    _this.element.removeData();
+    _classPrivateFieldGet(_this, _element).removeData();
+  });
+
+  _defineProperty(this, "setStartDate", function (startDate) {
+    util_date.date.setDate((moment_default()), _classPrivateFieldGet(_this, _options), _classPrivateFieldGet(_this, _locale), 'startDate');
+    if (!_classPrivateFieldGet(_this, _options).timePicker) _classPrivateFieldGet(_this, _options).startDate = _classPrivateFieldGet(_this, _options).startDate.startOf('day');
+    if (_classPrivateFieldGet(_this, _options).timePicker && _classPrivateFieldGet(_this, _options).timePickerIncrement) _classPrivateFieldGet(_this, _options).startDate.minute(Math.round(_classPrivateFieldGet(_this, _options).startDate.minute() / _classPrivateFieldGet(_this, _options).timePickerIncrement) * _classPrivateFieldGet(_this, _options).timePickerIncrement);
+
+    if (_classPrivateFieldGet(_this, _options).minDate && _classPrivateFieldGet(_this, _options).startDate.isBefore(_classPrivateFieldGet(_this, _options).minDate)) {
+      _classPrivateFieldGet(_this, _options).startDate = _classPrivateFieldGet(_this, _options).minDate.clone();
+      if (_classPrivateFieldGet(_this, _options).timePicker && _classPrivateFieldGet(_this, _options).timePickerIncrement) _classPrivateFieldGet(_this, _options).startDate.minute(Math.round(_classPrivateFieldGet(_this, _options).startDate.minute() / _classPrivateFieldGet(_this, _options).timePickerIncrement) * _classPrivateFieldGet(_this, _options).timePickerIncrement);
+    }
+
+    if (_classPrivateFieldGet(_this, _options).maxDate && _classPrivateFieldGet(_this, _options).startDate.isAfter(_classPrivateFieldGet(_this, _options).maxDate)) {
+      _classPrivateFieldGet(_this, _options).startDate = _classPrivateFieldGet(_this, _options).maxDate.clone();
+      if (_classPrivateFieldGet(_this, _options).timePicker && _classPrivateFieldGet(_this, _options).timePickerIncrement) _classPrivateFieldGet(_this, _options).startDate.minute(Math.floor(_classPrivateFieldGet(_this, _options).startDate.minute() / _classPrivateFieldGet(_this, _options).timePickerIncrement) * _classPrivateFieldGet(_this, _options).timePickerIncrement);
+    }
+
+    if (!_classPrivateFieldGet(_this, _isShowing)) _this.updateElement();
+
+    _this.updateMonthsInView();
+  });
+
+  _defineProperty(this, "setEndDate", function (endDate) {
+    util_date.date.setDate((moment_default()), _classPrivateFieldGet(_this, _options), _classPrivateFieldGet(_this, _locale), 'endDate');
+    if (!_classPrivateFieldGet(_this, _options).timePicker) _classPrivateFieldGet(_this, _options).endDate = _classPrivateFieldGet(_this, _options).endDate.endOf('day');
+    if (_classPrivateFieldGet(_this, _options).timePicker && _classPrivateFieldGet(_this, _options).timePickerIncrement) _classPrivateFieldGet(_this, _options).endDate.minute(Math.round(_classPrivateFieldGet(_this, _options).endDate.minute() / _classPrivateFieldGet(_this, _options).timePickerIncrement) * _classPrivateFieldGet(_this, _options).timePickerIncrement);
+    if (_classPrivateFieldGet(_this, _options).endDate.isBefore(_classPrivateFieldGet(_this, _options).startDate)) _classPrivateFieldGet(_this, _options).endDate = _classPrivateFieldGet(_this, _options).startDate.clone();
+    if (_classPrivateFieldGet(_this, _options).maxDate && _classPrivateFieldGet(_this, _options).endDate.isAfter(_classPrivateFieldGet(_this, _options).maxDate)) _classPrivateFieldGet(_this, _options).endDate = _classPrivateFieldGet(_this, _options).maxDate.clone();
+    if (_classPrivateFieldGet(_this, _options).maxSpan && _classPrivateFieldGet(_this, _options).startDate.clone().add(_classPrivateFieldGet(_this, _options).maxSpan).isBefore(_classPrivateFieldGet(_this, _options).endDate)) _classPrivateFieldGet(_this, _options).endDate = _classPrivateFieldGet(_this, _options).startDate.clone().add(_classPrivateFieldGet(_this, _options).maxSpan);
+
+    _classPrivateFieldSet(_this, _previousRightTime, _classPrivateFieldGet(_this, _options).endDate.clone());
+
+    _this.container.find('.drp-selected').html(_classPrivateFieldGet(_this, _options).startDate.format(_classPrivateFieldGet(_this, _locale).format) + _classPrivateFieldGet(_this, _locale).separator + _classPrivateFieldGet(_this, _options).endDate.format(_classPrivateFieldGet(_this, _locale).format));
+
+    if (!_classPrivateFieldGet(_this, _isShowing)) _this.updateElement();
+
+    _this.updateMonthsInView();
+  });
+
+  _defineProperty(this, "updateMonthsInView", function () {
+    if (_classPrivateFieldGet(_this, _options).endDate) {
+      //if both dates are visible already, do nothing
+      if (!_classPrivateFieldGet(_this, _options).singleDatePicker && _classPrivateFieldGet(_this, _leftCalendar).month && _classPrivateFieldGet(_this, _rightCalendar).month && (_classPrivateFieldGet(_this, _options).startDate.format('YYYY-MM') == _classPrivateFieldGet(_this, _leftCalendar).month.format('YYYY-MM') || _classPrivateFieldGet(_this, _options).startDate.format('YYYY-MM') == _classPrivateFieldGet(_this, _rightCalendar).month.format('YYYY-MM')) && (_classPrivateFieldGet(_this, _options).endDate.format('YYYY-MM') == _classPrivateFieldGet(_this, _leftCalendar).month.format('YYYY-MM') || _classPrivateFieldGet(_this, _options).endDate.format('YYYY-MM') == _classPrivateFieldGet(_this, _rightCalendar).month.format('YYYY-MM'))) {
+        return;
+      }
+
+      _classPrivateFieldGet(_this, _leftCalendar).month = _classPrivateFieldGet(_this, _options).startDate.clone().date(2);
+
+      if (!_classPrivateFieldGet(_this, _options).linkedCalendars && (_classPrivateFieldGet(_this, _options).endDate.month() != _classPrivateFieldGet(_this, _options).startDate.month() || _classPrivateFieldGet(_this, _options).endDate.year() != _classPrivateFieldGet(_this, _options).startDate.year())) {
+        _classPrivateFieldGet(_this, _rightCalendar).month = _classPrivateFieldGet(_this, _options).endDate.clone().date(2);
+      } else {
+        _classPrivateFieldGet(_this, _rightCalendar).month = _classPrivateFieldGet(_this, _options).startDate.clone().date(2).add(1, 'month');
+      }
+    } else {
+      if (_classPrivateFieldGet(_this, _leftCalendar).month.format('YYYY-MM') != _classPrivateFieldGet(_this, _options).startDate.format('YYYY-MM') && _classPrivateFieldGet(_this, _rightCalendar).month.format('YYYY-MM') != _classPrivateFieldGet(_this, _options).startDate.format('YYYY-MM')) {
+        _classPrivateFieldGet(_this, _leftCalendar).month = _classPrivateFieldGet(_this, _options).startDate.clone().date(2);
+        _classPrivateFieldGet(_this, _rightCalendar).month = _classPrivateFieldGet(_this, _options).startDate.clone().date(2).add(1, 'month');
+      }
+    }
+
+    if (_classPrivateFieldGet(_this, _options).maxDate && _classPrivateFieldGet(_this, _options).linkedCalendars && !_classPrivateFieldGet(_this, _options).singleDatePicker && _classPrivateFieldGet(_this, _rightCalendar).month > _classPrivateFieldGet(_this, _options).maxDate) {
+      _classPrivateFieldGet(_this, _rightCalendar).month = _classPrivateFieldGet(_this, _options).maxDate.clone().date(2);
+      _classPrivateFieldGet(_this, _leftCalendar).month = _classPrivateFieldGet(_this, _options).maxDate.clone().date(2).subtract(1, 'month');
+    }
   });
 
   _classPrivateFieldSet(this, _element, element);
@@ -38650,6 +38847,8 @@ function DatePicker(element, _options2, cb) {
 ;
 /* harmony default export */ const js_DatePicker = (DatePicker);
 ;// CONCATENATED MODULE: ./src/js/DateRangePicker.js
+function DateRangePicker_typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { DateRangePicker_typeof = function _typeof(obj) { return typeof obj; }; } else { DateRangePicker_typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return DateRangePicker_typeof(obj); }
+
 function DateRangePicker_classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function DateRangePicker_defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
@@ -38668,6 +38867,8 @@ function DateRangePicker_classApplyDescriptorSet(receiver, descriptor, value) { 
 
 var _datePicker = /*#__PURE__*/new WeakMap();
 
+var _initRange = /*#__PURE__*/new WeakMap();
+
 var DateRangePicker =
 /**
  * 
@@ -38675,7 +38876,7 @@ var DateRangePicker =
  * @param {Object} options DateRangePicker 설정 값.
  * @param {Fuction} cb 콜백 함수 
  */
-function DateRangePicker(element, options, cb) {
+function DateRangePicker(element, _options, cb) {
   var _this = this;
 
   DateRangePicker_classCallCheck(this, DateRangePicker);
@@ -38685,11 +38886,53 @@ function DateRangePicker(element, options, cb) {
     value: void 0
   });
 
+  _initRange.set(this, {
+    writable: true,
+    value: function value() {
+      var options = DateRangePicker_classPrivateFieldGet(_this, _datePicker).getOptions();
+
+      if (DateRangePicker_typeof(options.ranges) === 'object') {
+        for (range in options.ranges) {
+          if (typeof options.ranges[range][0] === 'string') start = moment(options.ranges[range][0], _this.locale.format);else start = moment(options.ranges[range][0]);
+          if (typeof options.ranges[range][1] === 'string') end = moment(options.ranges[range][1], _this.locale.format);else end = moment(options.ranges[range][1]); // If the start or end date exceed those allowed by the minDate or maxSpan
+          // options, shorten the range to the allowable period.
+
+          if (_this.minDate && start.isBefore(_this.minDate)) start = _this.minDate.clone();
+          var maxDate = _this.maxDate;
+          if (_this.maxSpan && maxDate && start.clone().add(_this.maxSpan).isAfter(maxDate)) maxDate = start.clone().add(_this.maxSpan);
+          if (maxDate && end.isAfter(maxDate)) end = maxDate.clone(); // If the end of the range is before the minimum or the start of the range is
+          // after the maximum, don't display this range option at all.
+
+          if (_this.minDate && end.isBefore(_this.minDate, _this.timepicker ? 'minute' : 'day') || maxDate && start.isAfter(maxDate, _this.timepicker ? 'minute' : 'day')) continue; //Support unicode chars in the range names.
+
+          var elem = document.createElement('textarea');
+          elem.innerHTML = range;
+          var rangeHtml = elem.value;
+          _this.ranges[rangeHtml] = [start, end];
+        }
+
+        var list = '<ul>';
+
+        for (range in _this.ranges) {
+          list += '<li data-range-key="' + range + '">' + range + '</li>';
+        }
+
+        if (_this.showCustomRangeLabel) {
+          list += '<li data-range-key="' + _this.locale.customRangeLabel + '">' + _this.locale.customRangeLabel + '</li>';
+        }
+
+        list += '</ul>';
+
+        _this.container.find('.ranges').prepend(list);
+      }
+    }
+  });
+
   DateRangePicker_defineProperty(this, "remove", function () {
     DateRangePicker_classPrivateFieldGet(_this, _datePicker).remove();
   });
 
-  DateRangePicker_classPrivateFieldSet(this, _datePicker, new js_DatePicker(element, options, cb));
+  DateRangePicker_classPrivateFieldSet(this, _datePicker, new js_DatePicker(element, _options, cb));
 };
 
 ;
