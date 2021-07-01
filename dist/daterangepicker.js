@@ -38429,8 +38429,8 @@ var util = {
 };
 /* harmony default export */ const util_date = (util);
 // EXTERNAL MODULE: ./node_modules/moment/moment.js
-var moment_moment = __webpack_require__(381);
-var moment_default = /*#__PURE__*/__webpack_require__.n(moment_moment);
+var moment = __webpack_require__(381);
+var moment_default = /*#__PURE__*/__webpack_require__.n(moment);
 // EXTERNAL MODULE: ./node_modules/moment/locale/ko.js
 var ko = __webpack_require__(3730);
 // EXTERNAL MODULE: ./node_modules/moment/locale/es-us.js
@@ -38461,10 +38461,7 @@ function _classApplyDescriptorSet(receiver, descriptor, value) { if (descriptor.
 
 moment_default().locale("ko");
 
-function createFragment(markup) {
-  var fragment = document.createRange().createContextualFragment(markup);
-  return fragment.firstElementChild;
-}
+var _moment = /*#__PURE__*/new WeakMap();
 
 var _parentEl = /*#__PURE__*/new WeakMap();
 
@@ -38498,6 +38495,10 @@ var DatePicker =
  */
 
 /**
+ * 부모 엘리먼트
+ */
+
+/**
  * DatePicker UI 레이아웃.
  */
 
@@ -38517,6 +38518,11 @@ function DatePicker(element, _options2, cb) {
   var _this = this;
 
   _classCallCheck(this, DatePicker);
+
+  _moment.set(this, {
+    writable: true,
+    value: (moment_default())
+  });
 
   _parentEl.set(this, {
     writable: true,
@@ -38563,6 +38569,23 @@ function DatePicker(element, _options2, cb) {
     value: void 0
   });
 
+  _defineProperty(this, "createFragment", function (markup) {
+    var fragment = document.createRange().createContextualFragment(markup);
+    return fragment.firstElementChild;
+  });
+
+  _defineProperty(this, "getMoment", function () {
+    return _classPrivateFieldGet(_this, _moment);
+  });
+
+  _defineProperty(this, "getParentEl", function () {
+    return _classPrivateFieldGet(_this, _parentEl);
+  });
+
+  _defineProperty(this, "getContainer", function () {
+    return _classPrivateFieldGet(_this, _container);
+  });
+
   _defineProperty(this, "getElement", function () {
     return _classPrivateFieldGet(_this, _element);
   });
@@ -38599,7 +38622,7 @@ function DatePicker(element, _options2, cb) {
 
       _classPrivateFieldSet(_this, _parentEl, parentEl != null && parentEl.length > 0 ? parentEl[0] : null);
 
-      _classPrivateFieldSet(_this, _container, createFragment(_classPrivateFieldGet(_this, _options).template)); // render performance...
+      _classPrivateFieldSet(_this, _container, _this.createFragment(_classPrivateFieldGet(_this, _options).template)); // render performance...
 
 
       var fragment = document.createDocumentFragment();
@@ -38624,14 +38647,22 @@ function DatePicker(element, _options2, cb) {
         options.locale = {};
       }
 
-      _classPrivateFieldSet(_this, _options, lodash_default().cloneDeep(default_options, {
+      _classPrivateFieldSet(_this, _options, lodash_default().merge(default_options, {
         startDate: moment_default()().startOf('day'),
         endDate: moment_default()().endOf('day'),
         minYear: moment_default()().subtract(100, 'year').format('YYYY'),
-        maxYear: moment_default()().add(100, 'year').format('YYYY')
+        maxYear: moment_default()().add(100, 'year').format('YYYY'),
+        ranges: {
+          'Today': [moment_default()(), moment_default()()],
+          'Yesterday': [moment_default()().subtract(1, 'days'), moment_default()().subtract(1, 'days')],
+          'Last 7 Days': [moment_default()().subtract(6, 'days'), moment_default()()],
+          'Last 30 Days': [moment_default()().subtract(29, 'days'), moment_default()()],
+          'This Month': [moment_default()().startOf('month'), moment_default()().endOf('month')],
+          'Last Month': [moment_default()().subtract(1, 'month').startOf('month'), moment_default()().subtract(1, 'month').endOf('month')]
+        }
       }, options));
 
-      _classPrivateFieldSet(_this, _locale, lodash_default().cloneDeep(default_locale, {
+      _classPrivateFieldSet(_this, _locale, lodash_default().merge(default_locale, {
         format: 'YYYY-MM-DD',
         daysOfWeek: moment_default()().localeData().weekdaysMin(),
         monthNames: moment_default()().localeData().monthsShort(),
@@ -38867,6 +38898,8 @@ function DateRangePicker_classApplyDescriptorSet(receiver, descriptor, value) { 
 
 var _datePicker = /*#__PURE__*/new WeakMap();
 
+var _ranges = /*#__PURE__*/new WeakMap();
+
 var _initRange = /*#__PURE__*/new WeakMap();
 
 var DateRangePicker =
@@ -38886,44 +38919,60 @@ function DateRangePicker(element, _options, cb) {
     value: void 0
   });
 
+  _ranges.set(this, {
+    writable: true,
+    value: {}
+  });
+
   _initRange.set(this, {
     writable: true,
     value: function value() {
       var options = DateRangePicker_classPrivateFieldGet(_this, _datePicker).getOptions();
 
+      var locale = DateRangePicker_classPrivateFieldGet(_this, _datePicker).getLocale();
+
+      var moment = DateRangePicker_classPrivateFieldGet(_this, _datePicker).getMoment();
+
+      var start = options.startDate;
+      var end = options.endDate;
+
       if (DateRangePicker_typeof(options.ranges) === 'object') {
-        for (range in options.ranges) {
-          if (typeof options.ranges[range][0] === 'string') start = moment(options.ranges[range][0], _this.locale.format);else start = moment(options.ranges[range][0]);
-          if (typeof options.ranges[range][1] === 'string') end = moment(options.ranges[range][1], _this.locale.format);else end = moment(options.ranges[range][1]); // If the start or end date exceed those allowed by the minDate or maxSpan
+        for (var range in options.ranges) {
+          if (typeof options.ranges[range][0] === 'string') start = moment(options.ranges[range][0], locale.format);else start = moment(options.ranges[range][0]);
+          if (typeof options.ranges[range][1] === 'string') end = moment(options.ranges[range][1], locale.format);else end = moment(options.ranges[range][1]); // If the start or end date exceed those allowed by the minDate or maxSpan
           // options, shorten the range to the allowable period.
 
-          if (_this.minDate && start.isBefore(_this.minDate)) start = _this.minDate.clone();
-          var maxDate = _this.maxDate;
-          if (_this.maxSpan && maxDate && start.clone().add(_this.maxSpan).isAfter(maxDate)) maxDate = start.clone().add(_this.maxSpan);
+          if (options.minDate && start.isBefore(options.minDate)) start = _this.minDate.clone();
+          var maxDate = options.maxDate;
+          if (options.maxSpan && maxDate && start.clone().add(options.maxSpan).isAfter(maxDate)) maxDate = start.clone().add(options.maxSpan);
           if (maxDate && end.isAfter(maxDate)) end = maxDate.clone(); // If the end of the range is before the minimum or the start of the range is
           // after the maximum, don't display this range option at all.
 
-          if (_this.minDate && end.isBefore(_this.minDate, _this.timepicker ? 'minute' : 'day') || maxDate && start.isAfter(maxDate, _this.timepicker ? 'minute' : 'day')) continue; //Support unicode chars in the range names.
+          if (options.minDate && end.isBefore(options.minDate, options.timepicker ? 'minute' : 'day') || maxDate && start.isAfter(maxDate, options.timepicker ? 'minute' : 'day')) continue; //Support unicode chars in the range names.
 
           var elem = document.createElement('textarea');
           elem.innerHTML = range;
           var rangeHtml = elem.value;
-          _this.ranges[rangeHtml] = [start, end];
+          console.log(range, rangeHtml);
+          DateRangePicker_classPrivateFieldGet(_this, _ranges)[rangeHtml] = [start, end];
         }
 
         var list = '<ul>';
 
-        for (range in _this.ranges) {
-          list += '<li data-range-key="' + range + '">' + range + '</li>';
+        for (var _range in DateRangePicker_classPrivateFieldGet(_this, _ranges)) {
+          list += '<li data-range-key="' + _range + '">' + _range + '</li>';
         }
 
-        if (_this.showCustomRangeLabel) {
-          list += '<li data-range-key="' + _this.locale.customRangeLabel + '">' + _this.locale.customRangeLabel + '</li>';
+        if (options.showCustomRangeLabel) {
+          list += '<li data-range-key="' + locale.customRangeLabel + '">' + locale.customRangeLabel + '</li>';
         }
 
-        list += '</ul>';
+        list += '</ul>'; // render performance...
 
-        _this.container.find('.ranges').prepend(list);
+        var fragment = document.createDocumentFragment();
+        fragment.appendChild(DateRangePicker_classPrivateFieldGet(_this, _datePicker).createFragment(list));
+
+        DateRangePicker_classPrivateFieldGet(_this, _datePicker).getContainer().querySelector('.ranges').prepend(fragment);
       }
     }
   });
@@ -38933,6 +38982,8 @@ function DateRangePicker(element, _options, cb) {
   });
 
   DateRangePicker_classPrivateFieldSet(this, _datePicker, new js_DatePicker(element, _options, cb));
+
+  DateRangePicker_classPrivateFieldGet(this, _initRange).call(this);
 };
 
 ;

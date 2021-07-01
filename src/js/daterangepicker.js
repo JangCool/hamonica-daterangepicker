@@ -4,6 +4,8 @@ class DateRangePicker {
 
     #datePicker;
 
+    #ranges = {};
+
     /**
      * 
      * @param {Element} element 대상 엘리먼트
@@ -11,61 +13,74 @@ class DateRangePicker {
      * @param {Fuction} cb 콜백 함수 
      */
     constructor(element, options, cb) {
+       
         this.#datePicker = new DatePicker(element, options, cb);
+        this.#initRange();
     }
 
     #initRange = () => {
 
         let options = this.#datePicker.getOptions();
+        let locale = this.#datePicker.getLocale();
 
-        if (typeof options.ranges === 'object') {
-            for (range in options.ranges) {
+        let moment = this.#datePicker.getMoment();
 
-                if (typeof options.ranges[range][0] === 'string')
-                    start = moment(options.ranges[range][0], this.locale.format);
-                else
-                    start = moment(options.ranges[range][0]);
+        let start = options.startDate;
+        let end = options.endDate;
 
-                if (typeof options.ranges[range][1] === 'string')
-                    end = moment(options.ranges[range][1], this.locale.format);
-                else
-                    end = moment(options.ranges[range][1]);
+        //좌측에 보여주는 범위 항목들 출력.
+        for (const range in options.ranges) {
 
-                // If the start or end date exceed those allowed by the minDate or maxSpan
-                // options, shorten the range to the allowable period.
-                if (this.minDate && start.isBefore(this.minDate))
-                    start = this.minDate.clone();
+            if (typeof options.ranges[range][0] === 'string')
+                start = moment(options.ranges[range][0], locale.format);
+            else
+                start = moment(options.ranges[range][0]);
 
-                var maxDate = this.maxDate;
-                if (this.maxSpan && maxDate && start.clone().add(this.maxSpan).isAfter(maxDate))
-                    maxDate = start.clone().add(this.maxSpan);
-                if (maxDate && end.isAfter(maxDate))
-                    end = maxDate.clone();
+            if (typeof options.ranges[range][1] === 'string')
+                end = moment(options.ranges[range][1], locale.format);
+            else
+                end = moment(options.ranges[range][1]);
 
-                // If the end of the range is before the minimum or the start of the range is
-                // after the maximum, don't display this range option at all.
-                if ((this.minDate && end.isBefore(this.minDate, this.timepicker ? 'minute' : 'day'))
-                  || (maxDate && start.isAfter(maxDate, this.timepicker ? 'minute' : 'day')))
-                    continue;
+            // If the start or end date exceed those allowed by the minDate or maxSpan
+            // options, shorten the range to the allowable period.
+            if (options.minDate && start.isBefore(options.minDate))
+                start = options.minDate.clone();
 
-                //Support unicode chars in the range names.
-                var elem = document.createElement('textarea');
-                elem.innerHTML = range;
-                var rangeHtml = elem.value;
+            var maxDate = options.maxDate;
+            if (options.maxSpan && maxDate && start.clone().add(options.maxSpan).isAfter(maxDate))
+                maxDate = start.clone().add(options.maxSpan);
+            if (maxDate && end.isAfter(maxDate))
+                end = maxDate.clone();
 
-                this.ranges[rangeHtml] = [start, end];
-            }
+            // If the end of the range is before the minimum or the start of the range is
+            // after the maximum, don't display this range option at all.
+            if ((options.minDate && end.isBefore(options.minDate, options.timepicker ? 'minute' : 'day'))
+                || (maxDate && start.isAfter(maxDate, options.timepicker ? 'minute' : 'day')))
+                continue;
 
-            var list = '<ul>';
-            for (range in this.ranges) {
-                list += '<li data-range-key="' + range + '">' + range + '</li>';
-            }
-            if (this.showCustomRangeLabel) {
-                list += '<li data-range-key="' + this.locale.customRangeLabel + '">' + this.locale.customRangeLabel + '</li>';
-            }
-            list += '</ul>';
-            this.container.find('.ranges').prepend(list);
+            //Support unicode chars in the range names.
+            var elem = document.createElement('textarea');
+            elem.innerHTML = range;
+            var rangeHtml = elem.value;
+
+            this.#ranges[rangeHtml] = [start, end];
         }
+
+        var list = '<ul>';
+        for (const range in this.#ranges) {
+            list += '<li data-range-key="' + range + '">' + range + '</li>';
+        }
+        if (options.showCustomRangeLabel) {
+            list += '<li data-range-key="' + locale.customRangeLabel + '">' + locale.customRangeLabel + '</li>';
+        }
+        list += '</ul>';
+
+                    
+        // render performance...
+        var fragment = document.createDocumentFragment();
+        fragment.appendChild(this.#datePicker.createFragment(list));
+
+        this.#datePicker.getContainer().querySelector('.ranges').prepend(fragment);
     }
 
     remove = () => {

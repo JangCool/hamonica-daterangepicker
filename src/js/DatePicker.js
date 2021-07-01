@@ -8,12 +8,13 @@ import "moment/locale/es-us";
 
 moment.locale("ko");
 
-function createFragment(markup) {
-    const fragment = document.createRange().createContextualFragment(markup);
-    return fragment.firstElementChild;
-}
 class DatePicker {
     
+    /**
+     * 부모 엘리먼트
+     */
+    #moment = moment;
+
     /**
      * 부모 엘리먼트
      */
@@ -55,6 +56,23 @@ class DatePicker {
         this.#initOptions(options);
         this.updateElement();
         
+    }
+
+    createFragment = (markup) => {
+        const fragment = document.createRange().createContextualFragment(markup);
+        return fragment.firstElementChild;
+    }
+
+    getMoment = () => {
+        return this.#moment;
+    }
+    
+    getParentEl = () => {
+        return this.#parentEl;
+    }
+
+    getContainer = () => {
+        return this.#container;
     }
 
     getElement = () => {
@@ -108,7 +126,7 @@ class DatePicker {
 
         this.#parentEl = (parentEl != null && parentEl.length > 0) ? parentEl[0] : null;
            
-        this.#container = createFragment(this.#options.template);
+        this.#container = this.createFragment(this.#options.template);
         // render performance...
         var fragment = document.createDocumentFragment();
         fragment.appendChild(this.#container);
@@ -131,14 +149,22 @@ class DatePicker {
             options.locale= {};
         }
 
-        this.#options = _.cloneDeep(defaulOptions,{
+        this.#options = _.merge(defaulOptions,{
             startDate: moment().startOf('day'),
             endDate: moment().endOf('day'),
             minYear: moment().subtract(100, 'year').format('YYYY'),
             maxYear: moment().add(100, 'year').format('YYYY'),
+            ranges: {
+                'Today': [moment(), moment()],
+                'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+                'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+                'This Month': [moment().startOf('month'), moment().endOf('month')],
+                'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+            }
         }, options);
         
-        this.#locale = _.cloneDeep(localeOptions,{
+        this.#locale = _.merge(localeOptions,{
             format: 'YYYY-MM-DD',
             daysOfWeek: moment().localeData().weekdaysMin(),
             monthNames: moment().localeData().monthsShort(),
