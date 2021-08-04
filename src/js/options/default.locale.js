@@ -1,7 +1,7 @@
 export default {
     direction: 'ltr',
     format: null,
-    separator: ' - ',
+    separator: ' ~ ',
     daysOfWeek: null,
     monthNames: null,
     firstDay: null,

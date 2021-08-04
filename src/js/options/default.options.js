@@ -5,7 +5,6 @@ export default {
  
     //default settings for options
     parentEl: 'body',
-    dateLibrary: null,
     element: null,
     startDate: null,
     endDate: null,
@@ -20,20 +19,62 @@ export default {
     showWeekNumbers: false,
     showISOWeekNumbers: false,
     showCustomRangeLabel: true,
-    timePicker: false,
+    timePicker: true,
     timePicker24Hour: false,
     timePickerIncrement: 1,
     timePickerSeconds: false,
-    linkedCalendars: true,
+    linkedCalendars: false,
     autoUpdateInput: true,
     alwaysShowCalendars : false,
-    callback: function() { console.log('Hamonica DateRangePicker callback ... ') ;},
+    showCalendars: true,
+    showRanges : false,
     ranges : {},
-    
-    buttonClasses: 'btn btn-sm',
-    applyButtonClasses: 'btn-primary',
-    cancelButtonClasses: 'btn-default',
+   
+    buttonClasses: null,
+    applyButtonClasses: null,
+    cancelButtonClasses: null,
 
     opens: 'right',
-    drops: 'down'
+    drops: 'down',
+
+    isInvalidDate: (p) => {
+        return false;
+    },
+
+    isCustomDate: (p) => {
+        return false;
+    },
+
+    callback: function() { console.log('Hamonica DateRangePicker callback ... ') ;},
+
+    events: {
+        /**
+         * 달력과 관련없는 외부 영역을 클릭했을 경우 호출.
+         * 
+         * @param {Event} e 
+         * @param {DatePicker} picker 
+         */
+        outsideClick: function(e, picker){
+            console.log("outsideClick ",e, picker);
+        },
+        clickApply: function(e, picker){
+            console.log("clickApply ",e, picker);
+        },
+        clickCancel: function(e, picker){
+            console.log("clickCancel ",e, picker);
+        },
+        show: function(e, picker){
+            console.log("show ",e, picker);
+        },
+        hide: function(e, picker){
+            console.log("hide ",e, picker);
+        },
+        showCalendar: function(e, picker){
+            console.log("show ",e, picker);
+        },
+        hideCalendars: function(e, picker){
+            console.log("hide ",e, picker);
+        }
+    }
+
 }

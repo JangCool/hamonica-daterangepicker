@@ -1,4 +1,5 @@
 import DatePicker from './DatePicker';
+import { hide, show} from './functions/functions';
 
 class DateRangePicker {
 
@@ -13,7 +14,7 @@ class DateRangePicker {
      * @param {Fuction} cb 콜백 함수 
      */
     constructor(element, options, cb) {
-       
+
         this.#datePicker = new DatePicker(element, options, cb);
         this.#initRange();
     }
@@ -23,23 +24,22 @@ class DateRangePicker {
         let options = this.#datePicker.getOptions();
         let locale = this.#datePicker.getLocale();
 
-        let moment = this.#datePicker.getMoment();
+        let dayjs = this.#datePicker.getDayjs();
 
         let start = options.startDate;
         let end = options.endDate;
-
         //좌측에 보여주는 범위 항목들 출력.
         for (const range in options.ranges) {
 
             if (typeof options.ranges[range][0] === 'string')
-                start = moment(options.ranges[range][0], locale.format);
+                start = dayjs(options.ranges[range][0], locale.format);
             else
-                start = moment(options.ranges[range][0]);
+                start = dayjs(options.ranges[range][0]);
 
             if (typeof options.ranges[range][1] === 'string')
-                end = moment(options.ranges[range][1], locale.format);
+                end = dayjs(options.ranges[range][1], locale.format);
             else
-                end = moment(options.ranges[range][1]);
+                end = dayjs(options.ranges[range][1]);
 
             // If the start or end date exceed those allowed by the minDate or maxSpan
             // options, shorten the range to the allowable period.
@@ -66,6 +66,7 @@ class DateRangePicker {
             this.#ranges[rangeHtml] = [start, end];
         }
 
+
         var list = '<ul>';
         for (const range in this.#ranges) {
             list += '<li data-range-key="' + range + '">' + range + '</li>';
@@ -80,7 +81,15 @@ class DateRangePicker {
         var fragment = document.createDocumentFragment();
         fragment.appendChild(this.#datePicker.createFragment(list));
 
-        this.#datePicker.getContainer().querySelector('.ranges').prepend(fragment);
+        let rangesElement = this.#datePicker.getContainer().querySelector('.ranges');
+
+        rangesElement.prepend(fragment);
+        
+        if(options.showRanges){
+            show(rangesElement);
+        }else{
+            hide(rangesElement)
+        }
     }
 
     remove = () => {

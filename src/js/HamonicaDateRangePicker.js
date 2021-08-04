@@ -1,8 +1,5 @@
-import defaulOptions from './options/default.options';
-import localeOptions from './options/default.locale';
 import DateRangePicker from './DateRangePicker';
-import RangePicker from './interfaces/RangePicker';
-
+import './DatePickerEvent'
 
 
 /**
@@ -31,10 +28,14 @@ class HamonicaDateRangePicker {
             tempElems = document.querySelectorAll(element);
         }
 
-        //날짜 객체 보관함에 등록.
-        tempElems.forEach(element => {
+        if(element instanceof HTMLInputElement || element instanceof HTMLButtonElement ){
             this.#elems.push(new DateRangePicker(element, options, cb));
-        });
+        } else{
+            //날짜 객체 보관함에 등록.
+            tempElems.forEach(element => {
+                this.#elems.push(new DateRangePicker(element, options, cb));
+            });
+        }
 
         this.#length = this.#elems.length;
     }

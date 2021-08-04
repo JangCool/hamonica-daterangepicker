@@ -1,5 +1,7 @@
 
+
 const util = {
+
     date :{
 
         /**
@@ -10,16 +12,22 @@ const util = {
          * @param {*} locale 지역 설정 값.
          * @param {*} field 날짜 데이터 속성.
          */
-        setDate(moment, options, locale, field) {
+        setDate(dayjs, options, locale, field) {
             if (typeof options[field] === 'string'){
-                options[field] = moment(options[field], locale.format)
+                if(options[field]){
+                    options[field] = dayjs(options[field], locale.format)                
+                }
             }
 
             if (typeof options[field] === 'object'){
-                options[field] = moment(options[field]);
+                if(options[field]){
+                    options[field] = dayjs(options[field]);
+                }
             }
         }
-    }
+    },
+    
+
 }
 
 export default util;
