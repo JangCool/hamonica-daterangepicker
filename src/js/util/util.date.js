@@ -11,17 +11,21 @@ const util = {
          * @param {*} options 설정 값
          * @param {*} locale 지역 설정 값.
          * @param {*} field 날짜 데이터 속성.
+         * @param {*} newDate 새로 지정할 값.
          */
-        setDate(dayjs, options, locale, field) {
-            if (typeof options[field] === 'string'){
-                if(options[field]){
-                    options[field] = dayjs(options[field], locale.format)                
+        setDate(dayjs, options, locale, field, newDate) {
+
+            let target = newDate ? newDate : options[field];
+
+            if (typeof target === 'string'){
+                if(target){
+                    options[field] = dayjs(target, locale.format)                
                 }
             }
 
-            if (typeof options[field] === 'object'){
-                if(options[field]){
-                    options[field] = dayjs(options[field]);
+            if (typeof target === 'object'){
+                if(target){
+                    options[field] = dayjs(target);
                 }
             }
         }

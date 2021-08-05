@@ -225,7 +225,7 @@
     <br><br>
     <br><br>
     <br><br>
-    <input id="datetime" style="margin-left: 300px">
+    <input id="datetime" style="margin-left: 300px;width:200px;font-size: 11px;">
 
     <button id="datetime2" style="margin-left: 300px">달력</button>
 
@@ -239,7 +239,9 @@
             {
                 drops: 'down',
                 opens: 'right',
-
+                // locale: {
+                //     format:'YYYY-MM-DD'
+                // },
                 events: {
                     outsideClick: (e, picker) => {
                         console.log("outsideClick ", e, picker);

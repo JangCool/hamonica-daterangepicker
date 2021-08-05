@@ -11,7 +11,7 @@ export default {
     minDate: null,
     maxDate: null,
     maxSpan: false,
-    autoApply: false,
+    autoApply: true,
     singleDatePicker: false,
     showDropdowns: false,
     minYear: null,
@@ -20,15 +20,16 @@ export default {
     showISOWeekNumbers: false,
     showCustomRangeLabel: true,
     timePicker: true,
-    timePicker24Hour: false,
+    timePicker24Hour: true,
     timePickerIncrement: 1,
-    timePickerSeconds: false,
+    timePickerSeconds: true,
     linkedCalendars: false,
     autoUpdateInput: true,
     alwaysShowCalendars : false,
     showCalendars: true,
     showRanges : false,
     ranges : {},
+    locale: null,
    
     buttonClasses: null,
     applyButtonClasses: null,
@@ -69,11 +70,11 @@ export default {
         hide: function(e, picker){
             console.log("hide ",e, picker);
         },
-        showCalendar: function(e, picker){
-            console.log("show ",e, picker);
+        showCalendars: function(e, picker){
+            console.log("showCalendar ",e, picker);
         },
         hideCalendars: function(e, picker){
-            console.log("hide ",e, picker);
+            console.log("hideCalendars ",e, picker);
         }
     }
 
