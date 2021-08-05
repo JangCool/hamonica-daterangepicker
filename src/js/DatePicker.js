@@ -39,6 +39,8 @@ class DatePicker {
     //some state information
     #isShowing = false;
 
+    #isShowingMonthlySelection = false;
+
     #leftCalendar = {};
 
     #rightCalendar = {};
@@ -167,16 +169,13 @@ class DatePicker {
                 self.timeChanged.call(self, e);
             }
         });
-
-        // this.#container.find('.drp-calendar')
-        //     .on('click.daterangepicker', '.prev', $.proxy(this.clickPrev, this))
-        //     .on('click.daterangepicker', '.next', $.proxy(this.clickNext, this))
-        //     .on('mousedown.daterangepicker', 'td.available', $.proxy(this.clickDate, this))
-        //     .on('mouseenter.daterangepicker', 'td.available', $.proxy(this.hoverDate, this))
-        //     .on('change.daterangepicker', 'select.yearselect', $.proxy(this.monthOrYearChanged, this))
-        //     .on('change.daterangepicker', 'select.monthselect', $.proxy(this.monthOrYearChanged, this))
-        //     .on('change.daterangepicker', 'select.hourselect,select.minuteselect,select.secondselect,select.ampmselect', $.proxy(this.timeChanged, this));
-
+        dynamicOn('.drp-calendar', 'click.daterangepicker', (e) => {
+            if (
+                e.target.matches("li.month > span")
+            ) {
+                self.clickMonth.call(self, e);
+            }
+        });
         let drpbuttons = this.#container.querySelector('.drp-buttons');
 
         drpbuttons.querySelector('button.btn.apply')
@@ -958,19 +957,19 @@ class DatePicker {
         var selected = side == 'left' ? options.startDate : options.endDate;
         var arrow = locale.direction == 'ltr' ? {left: 'chevron-left', right: 'chevron-right'} : {left: 'chevron-right', right: 'chevron-left'};
 
-        var html = '<table class="table-condensed">';
-        html += '<thead>';
-        html += '<tr>';
+        var html = '';
+        html += '<div class="control">';
+        html += '<ul>';
 
         // add empty cell for week number
         if (options.showWeekNumbers || options.showISOWeekNumbers){
-            html += '<th></th>';
+            html += '<li></li>';
         }
 
         if ((!minDate || minDate.isBefore(calendar.firstDay)) && (!options.linkedCalendars || side == 'left')) {
-            html += '<th class="prev available"><span></span></th>';
+            html += '<li class="prev available"><span></span></li>';
         } else {
-            html += '<th></th>';
+            html += '<li></li>';
         }
 
         var dateHtml = locale.monthNames[calendar[1][1].month()] + calendar[1][1].format(" YYYY");
@@ -1011,14 +1010,17 @@ class DatePicker {
             dateHtml = monthHtml + yearHtml;
         }
 
-        html += '<th colspan="5" class="month">' + dateHtml + '</th>';
+        html += '<li class="month"><span>' + dateHtml + '</span></li>';
         if ((!maxDate || maxDate.isAfter(calendar.lastDay)) && (!options.linkedCalendars || side == 'right' || options.singleDatePicker)) {
-            html += '<th class="next available"><span></span></th>';
+            html += '<li class="next available"><span></span></li>';
         } else {
-            html += '<th></th>';
+            html += '<li></li>';
         }
 
-        html += '</tr>';
+        html += '</ul>';
+        html += '</div>';
+        html += '<table class="table-condensed">';
+        html += '<thead>';
         html += '<tr>';
 
         // add week number label
@@ -1389,6 +1391,23 @@ console.log(selected, 'selected')
             if (!options.alwaysShowCalendars)
                 this.hideCalendars();
             this.clickApply();
+        }
+    }
+
+    clickMonth = (e) => {
+
+        let monthElement = e.target;
+
+        let classList = monthElement.classList;
+        let isActive = classList.contains('active');
+
+        // 년월 클릭시 클릭 여부 및 클래스 변경.
+        if(!isActive){
+            this.#isShowingMonthlySelection = true;
+            classList.add('active');
+        }else{
+            this.#isShowingMonthlySelection = false;
+            classList.remove('active');
         }
     }
 
