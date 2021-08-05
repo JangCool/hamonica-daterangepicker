@@ -1,6 +1,22 @@
 import DateRangePicker from './DateRangePicker';
 import './DatePickerEvent'
 
+import dayjs from 'dayjs';
+import "dayjs/locale/ko";
+import "dayjs/locale/ko";
+import "dayjs/locale/es-us";
+
+import utc from "dayjs/plugin/utc";
+import localeDate from "dayjs/plugin/localeData";
+import weekOfYear from "dayjs/plugin/weekOfYear";
+import isoWeek from "dayjs/plugin/isoWeek";
+import arraySupport from "dayjs/plugin/arraySupport";
+
+dayjs.extend(localeDate);
+dayjs.extend(utc);
+dayjs.extend(weekOfYear)
+dayjs.extend(isoWeek)
+dayjs.extend(arraySupport)
 
 /**
  * 
@@ -29,11 +45,11 @@ class HamonicaDateRangePicker {
         }
 
         if(element instanceof HTMLInputElement || element instanceof HTMLButtonElement ){
-            this.#elems.push(new DateRangePicker(element, options, cb));
+            this.#elems.push(new DateRangePicker(dayjs, element, options, cb));
         } else{
             //날짜 객체 보관함에 등록.
             tempElems.forEach(element => {
-                this.#elems.push(new DateRangePicker(element, options, cb));
+                this.#elems.push(new DateRangePicker(dayjs, element, options, cb));
             });
         }
 
@@ -58,7 +74,10 @@ const dateRangePicker = (element, options, cb) => {
     return new HamonicaDateRangePicker(element, options, cb);
 }
 
+const getDayjsOnDateRangePicker = () => dayjs;
+
 export {
     datePicker,
-    dateRangePicker
+    dateRangePicker,
+    getDayjsOnDateRangePicker
 } 

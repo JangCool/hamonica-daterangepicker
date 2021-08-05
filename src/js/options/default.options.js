@@ -27,7 +27,7 @@ export default {
     autoUpdateInput: true,
     alwaysShowCalendars : false,
     showCalendars: true,
-    showRanges : false,
+    showRanges : true,
     ranges : {},
     locale: null,
    

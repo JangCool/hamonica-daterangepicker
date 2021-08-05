@@ -2,32 +2,14 @@ import defaulOptions from './options/default.options';
 import localeOptions from './options/default.locale';
 import { isEmpty, merge } from 'lodash';
 import util from './util/util.date';
-import dayjs from 'dayjs';
-import "dayjs/locale/ko";
-import "dayjs/locale/ko";
-import "dayjs/locale/es-us";
-
-import utc from "dayjs/plugin/utc";
-import localeDate from "dayjs/plugin/localeData";
-import weekOfYear from "dayjs/plugin/weekOfYear";
-import isoWeek from "dayjs/plugin/isoWeek";
-import arraySupport from "dayjs/plugin/arraySupport";
 import { hide, show, getOffset, css, matches } from './functions/functions';
-
-dayjs.extend(localeDate);
-dayjs.extend(utc);
-dayjs.extend(weekOfYear)
-dayjs.extend(isoWeek)
-dayjs.extend(arraySupport)
-
-
 
 class DatePicker {
     
     /**
-     * 부모 엘리먼트
+     * dayjs 
      */
-    #dayjs = dayjs;
+    #dayjs;
 
     /**
      * 부모 엘리먼트
@@ -71,8 +53,10 @@ class DatePicker {
 
     #chosenLabel;
 
-    constructor(element, options, cb) {
+    constructor(dayjs, element, options, cb) {
         
+        this.#dayjs = dayjs;
+
         this.#element = element;
 
         this.#element.classList.add('hamonica');
@@ -369,6 +353,8 @@ class DatePicker {
 
     #initOptions = (options) => {
 
+        let dayjs = this.#dayjs;
+        
         // 값이 없을 경우 초기화.
         if(!options) {
             options = options || {};
@@ -377,25 +363,36 @@ class DatePicker {
         if(!options["locale"]){
             options.locale= {};
         }
+        //국제화처리.
+        this.#dayjs.locale(options.locale.i18n || 'en');
 
-        this.#options = merge(defaulOptions,{
-            startDate: dayjs().startOf('day'),
-            endDate: dayjs().endOf('day'),
-            minYear: dayjs().subtract(100, 'year').format('YYYY'),
-            maxYear: dayjs().add(100, 'year').format('YYYY'),
-            ranges: {
-                'Today': [dayjs(), dayjs()],
-                'Yesterday': [dayjs().subtract(1, 'days'), dayjs().subtract(1, 'days')],
-                'Last 7 Days': [dayjs().subtract(6, 'days'), dayjs()],
-                'Last 30 Days': [dayjs().subtract(29, 'days'), dayjs()],
-                'This Month': [dayjs().startOf('month'), dayjs().endOf('month')],
-                'Last Month': [dayjs().subtract(1, 'month').startOf('month'), dayjs().subtract(1, 'month').endOf('month')]
-            }
+        this.#options = merge(
+            merge({}, defaulOptions),
+            defaulOptions,
+            {
+                startDate: dayjs().startOf('day'),
+                endDate: dayjs().endOf('day'),
+                minYear: dayjs().subtract(100, 'year').format('YYYY'),
+                maxYear: dayjs().add(100, 'year').format('YYYY'),
+                ranges: {
+                    'Today': [dayjs(), dayjs()],
+                    'Yesterday': [dayjs().subtract(1, 'days'), dayjs().subtract(1, 'days')],
+                    'Last 7 Days': [dayjs().subtract(6, 'days'), dayjs()],
+                    'Last 30 Days': [dayjs().subtract(29, 'days'), dayjs()],
+                    'This Month': [dayjs().startOf('month'), dayjs().endOf('month')],
+                    'Last Month': [dayjs().subtract(1, 'month').startOf('month'), dayjs().subtract(1, 'month').endOf('month')]
+                }
             
         }, options);
+
+        if(typeof this.#options.ranges == 'function'){
+            this.#options.ranges = this.#options.ranges(dayjs);
+        }else{
+            console.warn("only function is supported.");
+        }
         
         this.#locale = merge(
-            localeOptions,
+            merge({}, localeOptions),
             {
                 daysOfWeek: dayjs().localeData().weekdaysMin(),
                 monthNames: dayjs().localeData().monthsShort(),
@@ -591,6 +588,8 @@ class DatePicker {
      */
     #initDate = () => {
 
+        let dayjs = this.#dayjs;
+
         util.date.setDate(dayjs, this.#options, this.#locale, 'startDate');
         util.date.setDate(dayjs, this.#options, this.#locale, 'endDate');
         util.date.setDate(dayjs, this.#options, this.#locale, 'minDate');
@@ -634,6 +633,9 @@ class DatePicker {
     }
     
     elementChanged = ()  => {
+
+        let dayjs = this.#dayjs;
+
         if (!matches(this.#element, 'input')) return;
         if (!this.#element.value.length) return;
 
@@ -700,6 +702,8 @@ class DatePicker {
 
     setStartDate = (startDate) => {
 
+        let dayjs = this.#dayjs;
+
         util.date.setDate( dayjs, this.#options, this.#locale, 'startDate', startDate);
 
         if (!this.#options.timePicker)
@@ -727,6 +731,8 @@ class DatePicker {
     }
 
     setEndDate = (endDate) => {
+
+        let dayjs = this.#dayjs;
 
         util.date.setDate( dayjs, this.#options, this.#locale, 'endDate', endDate);
  
@@ -756,7 +762,8 @@ class DatePicker {
     }
 
     updateView = () => {
-        console.log("updateView")
+
+
         let options = this.#options;
 
         if (options.timePicker) {
@@ -869,6 +876,7 @@ class DatePicker {
 
     renderCalendar = (side) => {
 
+        let dayjs = this.#dayjs;
 
         //
         // Build the matrix of dates that will populate the calendar
@@ -966,6 +974,9 @@ class DatePicker {
         }
 
         var dateHtml = locale.monthNames[calendar[1][1].month()] + calendar[1][1].format(" YYYY");
+        if(locale.i18n == 'ko'){
+            dateHtml = calendar[1][1].format(" YYYY") + (locale.yearLabel || '') +' ' +locale.monthNames[calendar[1][1].month()];
+        }
 
         if (options.showDropdowns) {
             var currentMonth = calendar[1][1].month();
@@ -1617,7 +1628,6 @@ console.log(selected, 'selected')
         // Month must be Number for new moment versions
         var month = parseInt(cal.querySelector('.monthselect').value, 10);
         var year = cal.querySelector('.yearselect').value;
-console.log('############month', month)
         let options = this.#options;
 
 

@@ -13,9 +13,9 @@ class DateRangePicker {
      * @param {Object} options DateRangePicker 설정 값.
      * @param {Fuction} cb 콜백 함수 
      */
-    constructor(element, options, cb) {
+    constructor(dayjs, element, options, cb) {
 
-        this.#datePicker = new DatePicker(element, options, cb);
+        this.#datePicker = new DatePicker(dayjs, element, options, cb);
         this.#initRange();
     }
 
