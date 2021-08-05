@@ -161,22 +161,36 @@
 
 .daterangepicker .calendar-table .control .month {
     width: calc(100% - 70px);
-    font-weight: bold;
 }
-.daterangepicker .calendar-table .control .month > span {
+.daterangepicker .calendar-table .control .month > button {
     border-radius: 4px;
-    display: inline-block;
     width: 100%;
+    border: none;
+    padding: 6px;
+    background: #fff;
     cursor: pointer;
+    font-weight: bold;
+    font-size: 12px;
 }
 
-.daterangepicker .calendar-table .control .month > span:hover {
-    background-color: #eee;
+.daterangepicker .calendar-table .control .month > button:active {
+    -webkit-box-shadow: none;
+    box-shadow: none;
+    -webkit-transform: translateY(1px);
+    transform: translateY(1px);
 }
 
-.daterangepicker .calendar-table .control .month > span.active {
+.daterangepicker .calendar-table .control .month > button:hover {
+    background: #eee;
+}
+
+.daterangepicker .calendar-table .control .month > button.active {
     background-color: #0061ff;
     color: #fff;
+}
+
+.daterangepicker .calendar-table .control .month > button.active:hover {
+    opacity: 0.8;
 }
 
 .daterangepicker .calendar-table .next span,

@@ -171,7 +171,7 @@ class DatePicker {
         });
         dynamicOn('.drp-calendar', 'click.daterangepicker', (e) => {
             if (
-                e.target.matches("li.month > span")
+                e.target.matches("li.month > button")
             ) {
                 self.clickMonth.call(self, e);
             }
@@ -1010,7 +1010,7 @@ class DatePicker {
             dateHtml = monthHtml + yearHtml;
         }
 
-        html += '<li class="month"><span>' + dateHtml + '</span></li>';
+        html += '<li class="month"><button>' + dateHtml + '</button></li>';
         if ((!maxDate || maxDate.isAfter(calendar.lastDay)) && (!options.linkedCalendars || side == 'right' || options.singleDatePicker)) {
             html += '<li class="next available"><span></span></li>';
         } else {
