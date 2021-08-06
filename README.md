@@ -44,7 +44,7 @@ http://www.pionnet.co.kr
 
   ```bash
   showMonthAndYearDropdowns : added option, Same features as the removed showdropdowns option.
-  showCalendars : added option.
+  showCalendars : added option. right calendars show/hide.
   showRanges : added option, left ranges show/hide.
   ranges: (dayjs) => {
     return {
