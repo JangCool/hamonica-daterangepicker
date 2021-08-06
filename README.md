@@ -12,15 +12,15 @@ __This is a version that has removed jquery, and there are some changes, so plea
 
 
 This date range picker component creates a dropdown menu from which a user can
-select a range of dates. I created it while building the UI for [Improvely](http://www.improvely.com), 
-which needed a way to select date ranges for reports.
+select a range of dates. I created it while building the UI for Hamonica monitoring system,
+which needed a way to select date ranges for dahboard or report.
 
 Features include limiting the selectable date range, localizable strings and date formats,
 a single date picker mode, a time picker, and predefined date ranges.
 
-## [Documentation and Live Usage Examples](http://www.daterangepicker.com)
+http://www.pionnet.co.kr
 
-## [See It In a Live Application](https://awio.iljmp.com/5/drpdemogh)
+## [Documentation and Live Usage Examples](http://www.daterangepicker.com)
 
 ## License
 
