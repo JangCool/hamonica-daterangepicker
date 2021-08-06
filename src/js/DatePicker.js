@@ -170,12 +170,16 @@ class DatePicker {
             }
         });
         dynamicOn('.drp-calendar', 'click.daterangepicker', (e) => {
-            if (
-                e.target.matches("li.month > button")
-            ) {
+            if (e.target.matches("li.month > button")) {
+                self.clickMonthSelection.call(self, e);
+            }
+            if (e.target.matches(".month-selection td")) {
                 self.clickMonth.call(self, e);
             }
         });
+
+        
+        
         let drpbuttons = this.#container.querySelector('.drp-buttons');
 
         drpbuttons.querySelector('button.btn.apply')
@@ -237,6 +241,10 @@ class DatePicker {
 
     getOldEndDate = () => {
         return this.#oldEndDate;
+    }
+
+    getCalendar = (side) => {
+        return side == 'left' ? this.#leftCalendar : this.#rightCalendar;
     }
     
 
@@ -678,7 +686,6 @@ class DatePicker {
         //input 엘리먼트이고 autoUpdateInput 설정이 true일 경우 처리 한다.
         if (this.#element instanceof HTMLInputElement  && this.#options.autoUpdateInput) {
 
-            console.log("updateElement")
             var newValue =  this.#options.startDate.format(this.#locale.format);
             if (! this.#options.singleDatePicker) {
                 newValue += this.#locale.separator +  this.#options.endDate.format(this.#locale.format);
@@ -873,6 +880,50 @@ class DatePicker {
         this.calculateChosenLabel();
     }
 
+    renderMonthSelection = (side) => {
+
+        let options = this.#options;
+        let locale = this.#locale;
+
+        var minDate = side == 'left' ? options.minDate : options.startDate;
+        var maxDate = options.maxDate;
+
+        let table = this.#container.querySelector(`.drp-calendar.${side} .table-condensed`);
+
+        let calendar = this.getCalendar(side).calendar;
+
+        var currentMonth = calendar[1][1].month();
+        var currentYear = calendar[1][1].year();
+        var maxYear = (maxDate && maxDate.year()) || (options.maxYear);
+        var minYear = (minDate && minDate.year()) || (options.minYear);
+        var inMinYear = currentYear == minYear;
+        var inMaxYear = currentYear == maxYear;
+
+        var monthHtml = '<tbody class="month-selection">';
+
+        for (var m = 0; m < 12; m++) {
+
+            let selected = (m === currentMonth) ? 'selected' : '';
+            let disabled = '';
+            let isNewTrTag = (m%3 == 0);
+
+            let isDisabled = !((!inMinYear || (minDate && m > minDate.month())) && (!inMaxYear || (maxDate && m <= maxDate.month())));
+            if (isDisabled) {
+                disabled = 'disabled';
+            }
+
+            if(isNewTrTag){
+                monthHtml += (m == 0) ? '<tr>' : '</tr><tr></tr>';
+            }
+
+            monthHtml += `<td data-value="${m}" class="${selected} ${disabled}"> ${locale.monthNames[m]}</td>`;
+        }
+        monthHtml += "</tr>";
+        monthHtml += "</tbody>";
+
+        table.innerHTML = monthHtml;
+    }
+
     renderCalendar = (side) => {
 
         let dayjs = this.#dayjs;
@@ -884,10 +935,8 @@ class DatePicker {
         let options = this.#options;
         let locale = this.#locale;
 
-        let leftCalendar = this.#leftCalendar;
-        let rightCalendar = this.#rightCalendar;
+        var calendar = this.getCalendar(side);
 
-        var calendar = side == 'left' ? leftCalendar : rightCalendar;
         var month = calendar.month.month();
         var year = calendar.month.year();
         var hour = calendar.month.hour();
@@ -902,12 +951,12 @@ class DatePicker {
         var dayOfWeek = firstDay.day();
 
         //initialize a 6 rows x 7 columns array for the calendar
-        var calendar = [];
+        var calendarArray = [];
         calendar.firstDay = firstDay;
         calendar.lastDay = lastDay;
 
         for (var i = 0; i < 6; i++) {
-            calendar[i] = [];
+            calendarArray[i] = [];
         }
 
         //populate the calendar with date objects
@@ -926,27 +975,22 @@ class DatePicker {
                 col = 0;
                 row++;
             }
-            calendar[row][col] = curDate.clone().hour(hour).minute(minute).second(second);
+            calendarArray[row][col] = curDate.clone().hour(hour).minute(minute).second(second);
 
             curDate = curDate.hour(12);
 
-            if (options.minDate && calendar[row][col].format('YYYY-MM-DD') == options.minDate.format('YYYY-MM-DD') && calendar[row][col].isBefore(options.minDate) && side == 'left') {
-                calendar[row][col] = options.minDate.clone();
+            if (options.minDate && calendarArray[row][col].format('YYYY-MM-DD') == options.minDate.format('YYYY-MM-DD') && calendarArray[row][col].isBefore(options.minDate) && side == 'left') {
+                calendarArray[row][col] = options.minDate.clone();
             }
 
-            if (options.maxDate && calendar[row][col].format('YYYY-MM-DD') == options.maxDate.format('YYYY-MM-DD') && calendar[row][col].isAfter(options.maxDate) && side == 'right') {
-                calendar[row][col] = options.maxDate.clone();
+            if (options.maxDate && calendarArray[row][col].format('YYYY-MM-DD') == options.maxDate.format('YYYY-MM-DD') && calendarArray[row][col].isAfter(options.maxDate) && side == 'right') {
+                calendarArray[row][col] = options.maxDate.clone();
             }
 
         }
-
 
         //make the calendar object available to hoverDate/clickDate
-        if (side == 'left') {
-            leftCalendar.calendar = calendar;
-        } else {
-            rightCalendar.calendar = calendar;
-        }
+        calendar.calendar = calendarArray;
 
         //
         // Display the calendar
@@ -972,14 +1016,14 @@ class DatePicker {
             html += '<li></li>';
         }
 
-        var dateHtml = locale.monthNames[calendar[1][1].month()] + calendar[1][1].format(" YYYY");
+        var dateHtml = locale.monthNames[calendarArray[1][1].month()] + calendarArray[1][1].format(" YYYY");
         if(locale.i18n == 'ko'){
-            dateHtml = calendar[1][1].format(" YYYY") + (locale.yearLabel || '') +' ' +locale.monthNames[calendar[1][1].month()];
+            dateHtml = calendarArray[1][1].format(" YYYY") + (locale.yearLabel || '') +' ' +locale.monthNames[calendarArray[1][1].month()];
         }
 
         if (options.showDropdowns) {
-            var currentMonth = calendar[1][1].month();
-            var currentYear = calendar[1][1].year();
+            var currentMonth = calendarArray[1][1].month();
+            var currentYear = calendarArray[1][1].year();
             var maxYear = (maxDate && maxDate.year()) || (options.maxYear);
             var minYear = (minDate && minDate.year()) || (options.minYear);
             var inMinYear = currentYear == minYear;
@@ -1049,60 +1093,60 @@ class DatePicker {
 
             // add week number
             if (options.showWeekNumbers)
-                html += '<td class="week">' + calendar[row][0].week() + '</td>';
+                html += '<td class="week">' + calendarArray[row][0].week() + '</td>';
             else if (options.showISOWeekNumbers)
-                html += '<td class="week">' + calendar[row][0].isoWeek() + '</td>';
+                html += '<td class="week">' + calendarArray[row][0].isoWeek() + '</td>';
 
             for (var col = 0; col < 7; col++) {
 
                 var classes = [];
 
                 //highlight today's date
-                if (calendar[row][col].isSame(new Date(), "day"))
+                if (calendarArray[row][col].isSame(new Date(), "day"))
                     classes.push('today');
 
                 //highlight weekends
-                if (calendar[row][col].isoWeekday() == 6){
+                if (calendarArray[row][col].isoWeekday() == 6){
                     classes.push('weekend');
                     classes.push('saturday');
                 }
 
                 //highlight weekends
-                if (calendar[row][col].isoWeekday() > 6){
+                if (calendarArray[row][col].isoWeekday() > 6){
                     classes.push('weekend');
                     classes.push('sunday');
                 }
 
                 //grey out the dates in other months displayed at beginning and end of this calendar
-                if (calendar[row][col].month() != calendar[1][1].month())
+                if (calendarArray[row][col].month() != calendarArray[1][1].month())
                     classes.push('off', 'ends');
 
                 //don't allow selection of dates before the minimum date
-                if (options.minDate && calendar[row][col].isBefore(options.minDate, 'day'))
+                if (options.minDate && calendarArray[row][col].isBefore(options.minDate, 'day'))
                     classes.push('off', 'disabled');
 
                 //don't allow selection of dates after the maximum date
-                if (maxDate && calendar[row][col].isAfter(maxDate, 'day'))
+                if (maxDate && calendarArray[row][col].isAfter(maxDate, 'day'))
                     classes.push('off', 'disabled');
 
                 //don't allow selection of date if a custom function decides it's invalid
-                if (options.isInvalidDate(calendar[row][col]))
+                if (options.isInvalidDate(calendarArray[row][col]))
                     classes.push('off', 'disabled');
 
                 //highlight the currently selected start date
-                if (calendar[row][col].format('YYYY-MM-DD') == options.startDate.format('YYYY-MM-DD'))
+                if (calendarArray[row][col].format('YYYY-MM-DD') == options.startDate.format('YYYY-MM-DD'))
                     classes.push('active', 'start-date');
 
                 //highlight the currently selected end date
-                if (options.endDate != null && calendar[row][col].format('YYYY-MM-DD') == options.endDate.format('YYYY-MM-DD'))
+                if (options.endDate != null && calendarArray[row][col].format('YYYY-MM-DD') == options.endDate.format('YYYY-MM-DD'))
                     classes.push('active', 'end-date');
 
                 //highlight dates in-between the selected dates
-                if (options.endDate != null && calendar[row][col] > options.startDate && calendar[row][col] < options.endDate)
+                if (options.endDate != null && calendarArray[row][col] > options.startDate && calendarArray[row][col] < options.endDate)
                     classes.push('in-range');
 
                 //apply custom classes for this date
-                var isCustom = options.isCustomDate(calendar[row][col]);
+                var isCustom = options.isCustomDate(calendarArray[row][col]);
                 if (isCustom !== false) {
                     if (typeof isCustom === 'string')
                         classes.push(isCustom);
@@ -1122,7 +1166,7 @@ class DatePicker {
                 }
 
                 
-                html += '<td class="' + cname.replace(/^\s+|\s+$/g, '') + '" data-title="' + 'r' + row + 'c' + col + '">' + calendar[row][col].date() + '</td>';
+                html += '<td class="' + cname.replace(/^\s+|\s+$/g, '') + '" data-title="' + 'r' + row + 'c' + col + '">' + calendarArray[row][col].date() + '</td>';
 
             }
             html += '</tr>';
@@ -1180,7 +1224,7 @@ class DatePicker {
                 selected = maxDate.clone();
 
         }
-console.log(selected, 'selected')
+
         //
         // hours
         //
@@ -1394,51 +1438,115 @@ console.log(selected, 'selected')
         }
     }
 
-    clickMonth = (e) => {
+    clickMonthSelection = (e) => {
 
         let monthElement = e.target;
 
         let classList = monthElement.classList;
         let isActive = classList.contains('active');
+        let side = e.target.closest('.drp-calendar.left') ? 'left' : 'right';
 
         // 년월 클릭시 클릭 여부 및 클래스 변경.
         if(!isActive){
             this.#isShowingMonthlySelection = true;
             classList.add('active');
+
+            //월 선택 화면 노출 중인지 여부.
+            this.#isShowingMonthlySelection = true;
+            this.renderMonthSelection(side);
+
         }else{
             this.#isShowingMonthlySelection = false;
             classList.remove('active');
+            this.updateCalendars();
         }
     }
 
-    clickPrev = (e) => {
-        var cal = e.target.closest('.drp-calendar');
-        
-        if (cal.classList.contains('left')) {
+    clickMonth = (e) => {
 
-            this.#leftCalendar.month = this.#leftCalendar.month.subtract(1, 'month');
+        let elem = e.target;
+        var cal = elem.closest('.drp-calendar');
 
-            if (this.#options.linkedCalendars)
-                this.#rightCalendar.month = this.#rightCalendar.month.subtract(1, 'month');
-        } else {
-            this.#rightCalendar.month = this.#rightCalendar.month.subtract(1, 'month');
+        //선택 금지된 항목이면 진행하지 않는다.
+        if(elem.classList.contains('disabled')){
+            return;
         }
 
+        let monthNumber = parseInt(elem.dataset.value);
+
+        if (cal.classList.contains('left')) {
+            this.#leftCalendar.month = this.#leftCalendar.month.month(monthNumber);
+
+            if (this.#options.linkedCalendars)
+                this.#rightCalendar.month = this.#rightCalendar.month.month(monthNumber);
+
+        } else {
+            this.#rightCalendar.month = this.#rightCalendar.month.month(monthNumber);
+        }
+
+        this.#isShowingMonthlySelection = false;
         this.updateCalendars();
+
+    }
+
+
+    clickPrev = (e) => {
+        var cal = e.target.closest('.drp-calendar');
+        let side = e.target.closest('.drp-calendar.left') ? 'left' : 'right';
+
+        let monthNumber = 1;
+
+        if(this.#isShowingMonthlySelection){
+            monthNumber = 12;
+        }
+        
+        if (cal.classList.contains('left')) {
+            this.#leftCalendar.month = this.#leftCalendar.month.subtract(monthNumber, 'month');
+
+            if (this.#options.linkedCalendars)
+                this.#rightCalendar.month = this.#rightCalendar.month.subtract(monthNumber, 'month');
+
+        } else {
+            this.#rightCalendar.month = this.#rightCalendar.month.subtract(monthNumber, 'month');
+        }
+
+        if(this.#isShowingMonthlySelection){
+            this.updateCalendars();
+            this.renderMonthSelection(side);
+            cal.querySelector('.month > button').classList.add('active');
+        }else{
+            this.updateCalendars();
+        }
     }
 
     clickNext = (e) => {
         var cal = e.target.closest('.drp-calendar');
+        let side = e.target.closest('.drp-calendar.left') ? 'left' : 'right';
+
+        let monthNumber = 1;
+
+        if(this.#isShowingMonthlySelection){
+            monthNumber = 12;
+        }
+        
         if (cal.classList.contains('left')) {
-            this.#leftCalendar.month = this.#leftCalendar.month.add(1, 'month');
+            this.#leftCalendar.month = this.#leftCalendar.month.add(monthNumber, 'month');
         } else {
-            this.#rightCalendar.month = this.#rightCalendar.month.add(1, 'month');
+            this.#rightCalendar.month = this.#rightCalendar.month.add(monthNumber, 'month');
             if (this.linkedCalendars){
-                this.#leftCalendar.month = this.#leftCalendar.month.add(1, 'month');
+                this.#leftCalendar.month = this.#leftCalendar.month.add(monthNumber, 'month');
             }
         }
-        this.updateCalendars();
+
+        if(this.#isShowingMonthlySelection){
+            this.updateCalendars();
+            this.renderMonthSelection(side);
+            cal.querySelector('.month > button').classList.add('active');
+        }else{
+            this.updateCalendars();
+        }
     }
+
     hoverDate = (e) => {
 
         //ignore dates that can't be selected
