@@ -20,25 +20,16 @@ a single date picker mode, a time picker, and predefined date ranges.
 
 http://www.pionnet.co.kr
 
-## Build and Run (npm run build)
-
-- daterangepicker(Dan Grossman):
+## Build and Run Server (npm)
 
   ```bash
-  # js, css build
-  npm run build
+  # js, css build:
+  npm run build   
   # start webpack server:
   npm run serve
 
   ```
 
-- Hamonica daterangepicker:
-
-  ```bash
-  npm install -g @vue/cli # OR yarn global add @vue/cli
-  vue create hello-vue3
-  # select vue 3 preset
-  ```
 
 ## Changes from Hamonica daterangepicker
 
