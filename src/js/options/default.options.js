@@ -6,6 +6,8 @@ export default {
     //default settings for options
     parentEl: 'body',
     element: null,
+    theme: null,
+    darkMode: false,
     startDate: null,
     endDate: null,
     minDate: null,
@@ -13,7 +15,7 @@ export default {
     maxSpan: false,
     autoApply: false,
     singleDatePicker: false,
-    showMonthAndYearDropdowns: false,
+    showMonthAndYearDropdowns: true,
     minYear: null,
     maxYear: null,
     showWeekNumbers: false,

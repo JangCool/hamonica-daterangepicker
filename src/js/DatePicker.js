@@ -4,6 +4,10 @@ import { isEmpty, merge } from 'lodash';
 import util from './util/util.date';
 import { hide, show, getOffset, css, matches } from './functions/functions';
 
+
+//제공하는 테마 목록 정의.
+const themeList = ['dark'];
+
 class DatePicker {
     
     /**
@@ -246,10 +250,29 @@ class DatePicker {
     getCalendar = (side) => {
         return side == 'left' ? this.#leftCalendar : this.#rightCalendar;
     }
+
+    setDarkMode = (isDark) => {
+        if(isDark){
+            this.setTheme('dark');
+        } else{
+            this.setTheme('');
+        }
+    }
+
+    setTheme = (theme) => {
+
+        let classList = this.#container.classList;
+
+        let isTheme = classList.contains(theme);
+
+        if(theme == null || theme ==''){
+            classList.remove(themeList);
+        }else if(theme && !isTheme){
+            classList.remove(themeList);
+            classList.add(theme);
+        }
+    }
     
-
-  
-
     #initContainer = () => {
 
          //html template for the picker UI
@@ -286,6 +309,13 @@ class DatePicker {
 
         //컨테이너가 위치할 방향 설정.
         this.#container.classList.add(this.#locale.direction);
+
+        //테마 설정.
+        if(this.#options.darkMode === true){
+            this.setTheme('dark');
+        } else {
+            this.setTheme(this.#options.theme);
+        }
 
         //달력 보여주기 옵션이 true이면 show-calendar 적용
         if (this.#options.showCalendars) {
@@ -1022,7 +1052,7 @@ class DatePicker {
             dateHtml = calendarArray[1][1].format(" YYYY") + (locale.yearLabel || '') +' ' +locale.monthNames[calendarArray[1][1].month()];
         }
 
-        if (options.showDropdowns) {
+        if (options.showMonthAndYearDropdowns) {
             var currentMonth = calendarArray[1][1].month();
             var currentYear = calendarArray[1][1].year();
             var maxYear = (maxDate && maxDate.year()) || (options.maxYear);
@@ -1055,7 +1085,8 @@ class DatePicker {
             dateHtml = monthHtml + yearHtml;
         }
 
-        html += '<li class="month"><button>' + dateHtml + '</button></li>';
+
+        html += (options.showMonthAndYearDropdowns) ? '<li class="month">' + dateHtml + '</li>' : '<li class="month"><button>' + dateHtml + '</button></li>';
         if ((!maxDate || maxDate.isAfter(calendar.lastDay)) && (!options.linkedCalendars || side == 'right' || options.singleDatePicker)) {
             html += '<li class="next available"><span></span></li>';
         } else {
