@@ -2,8 +2,8 @@
 
 ![image](https://user-images.githubusercontent.com/2518021/128446475-f3c5e941-05a4-4960-923e-8ec047e3659d.png)
 
-# I made it using daterangepicker and there are some changes.
-# Please check the difference when using it.
+__* I made it using daterangepicker and there are some changes.*__
+__* Please check the difference when using it.*__
 
 This date range picker component creates a dropdown menu from which a user can
 select a range of dates. I created it while building the UI for [Improvely](http://www.improvely.com), 
