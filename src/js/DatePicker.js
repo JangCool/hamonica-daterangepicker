@@ -453,6 +453,7 @@ class DatePicker {
         //단독으로 달력이 펼쳐질 경우 종료날짜를 시작날짜로 맞춤.
         if (this.#options.singleDatePicker === true) {
             this.#options.endDate = this.#options.startDate.clone();
+            this.#options.showRanges = false;
         }
 
         //날짜 범위 선택 항목이 false 인데 달력보여주는 항목도 false이면 달력을 기본으로 노출한다.

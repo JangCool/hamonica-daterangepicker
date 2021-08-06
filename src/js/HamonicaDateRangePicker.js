@@ -65,11 +65,6 @@ class HamonicaDateRangePicker {
 
 };
 
-
-const datePicker = (element, options, cb) => {
-    return new HamonicaDateRangePicker(element, options, cb);
-}
-
 const dateRangePicker = (element, options, cb) => {
     return new HamonicaDateRangePicker(element, options, cb);
 }
@@ -77,7 +72,6 @@ const dateRangePicker = (element, options, cb) => {
 const getDayjsOnDateRangePicker = () => dayjs;
 
 export {
-    datePicker,
     dateRangePicker,
     getDayjsOnDateRangePicker
 } 

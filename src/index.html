@@ -25,26 +25,10 @@
         //dayjs 객체.
         // let dayjs = getDayjsOnDateRangePicker();
 
-        const datetime = datePicker(
+        const datetime = dateRangePicker(
             document.querySelector("#datetime"),
             {
-                drops: 'down',
-                opens: 'right',
-                ranges: (dayjs) => {
-
-                    return {
-                        '오늘': [dayjs(), dayjs()],
-                        '어제': [dayjs().subtract(1, 'days'), dayjs().subtract(1, 'days')],
-                        '7일 전': [dayjs().subtract(6, 'days'), dayjs()],
-                        '30일 전': [dayjs().subtract(29, 'days'), dayjs()],
-                        '이번 달': [dayjs().startOf('month'), dayjs().endOf('month')],
-                        '지난 달': [dayjs().subtract(1, 'month').startOf('month'), dayjs().subtract(1, 'month').endOf('month')]
-                    };
-                },
-                locale: {
-                    i18n:'ko',
-                    yearLabel:'년'
-                },
+                singleDatePicker: false,
                 events: {
                     outsideClick: (e, picker) => {
                         console.log("outsideClick ", e, picker);
@@ -59,7 +43,7 @@
             }
         );
 
-        const datetime2 = datePicker(
+        const datetime2 = dateRangePicker(
             document.querySelector("#datetime2"),
             {
                 drops: 'down',
