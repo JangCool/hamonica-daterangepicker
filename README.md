@@ -58,6 +58,27 @@ http://www.pionnet.co.kr
   }
   
   ```
+  
+- Create daterangepicker:
+```
+  const datetime = dateRangePicker(
+      document.querySelector("#datetime"),
+      {
+          singleDatePicker: false,
+          events: {
+              outsideClick: (e, picker) => {
+                  console.log("outsideClick ", e, picker);
+              },
+              clickApply: (e, picker) => {
+                  console.log("clickApply ", e, picker);
+              },
+              clickCancel: (e, picker) => {
+                  console.log("clickCancel ", e, picker);
+              }
+          }
+      }
+  );
+```
 
 ## [Documentation and Live Usage Examples](http://www.daterangepicker.com)
 
