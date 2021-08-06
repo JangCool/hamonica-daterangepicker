@@ -24,7 +24,7 @@ http://www.pionnet.co.kr
 
 ## License
 
-***I checked Dan Grossman MIT license at the time of cloning and keep it the same.
+***I checked Dan Grossman MIT license at the time of cloning and keep it the same.***   
 
 The MIT License (MIT)
 
