@@ -38,19 +38,27 @@ http://www.pionnet.co.kr
 
   ```bash
   # npm 6.x
-  npm init vite@latest my-vue-app --template vue
-  # npm 7+, extra double-dash is needed:
-  npm init vite@latest my-vue-app -- --template vue
-  # yarn
-  yarn create vite my-vue-app --template vue
+  showDropdowns : removed option and added showMonthAndYearDropdowns
   ```
 
 - Hamonica daterangepicker:
 
   ```bash
-  npm install -g @vue/cli # OR yarn global add @vue/cli
-  vue create hello-vue3
-  # select vue 3 preset
+  showMonthAndYearDropdowns : added option, Same features as the removed showdropdowns option.
+  showCalendars : added option.
+  showRanges : added option, left ranges show/hide.
+  ranges: (dayjs) => {
+
+    return {
+        'Today': [dayjs(), dayjs()],
+        'Yesterday': [dayjs().subtract(1, 'days'), dayjs().subtract(1, 'days')],
+        '7일 전': [dayjs().subtract(6, 'days'), dayjs()],
+        '30일 전': [dayjs().subtract(29, 'days'), dayjs()],
+        '이번 달': [dayjs().startOf('month'), dayjs().endOf('month')],
+        '지난 달': [dayjs().subtract(1, 'month').startOf('month'), dayjs().subtract(1, 'month').endOf('month')]
+    } : changed option, Used only as a function. It takes a dayjs object as a parameter.
+},
+  
   ```
 
 ## [Documentation and Live Usage Examples](http://www.daterangepicker.com)
