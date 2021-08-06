@@ -37,7 +37,6 @@ http://www.pionnet.co.kr
 - daterangepicker(Dan Grossman):
 
   ```bash
-  # npm 6.x
   showDropdowns : removed option and added showMonthAndYearDropdowns
   ```
 
