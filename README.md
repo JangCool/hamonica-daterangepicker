@@ -24,6 +24,8 @@ http://www.pionnet.co.kr
 
 ## License
 
+***I checked Dan Grossman MIT license at the time of cloning and keep it the same.
+
 The MIT License (MIT)
 
 Copyright (c) 2012-2021 JangCool
