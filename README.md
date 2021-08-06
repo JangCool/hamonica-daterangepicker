@@ -1,6 +1,11 @@
 # Hamonica Date Range Picker
 
-![image](https://user-images.githubusercontent.com/2518021/128446475-f3c5e941-05a4-4960-923e-8ec047e3659d.png)
+ - normal mode:
+> ![image](https://user-images.githubusercontent.com/2518021/128446475-f3c5e941-05a4-4960-923e-8ec047e3659d.png)
+   
+ - dark mode:
+> ![image](https://user-images.githubusercontent.com/2518021/128463582-86ae25c1-0da7-42cc-8ec8-1d1338d32c1a.png)
+
 
 ## Intro
 >jquery를 이용하여 개발된 daterangepicker를 사용(복제:clone) 하여 만들었습니다.   
