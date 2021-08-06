@@ -55,7 +55,7 @@ http://www.pionnet.co.kr
         '이번 달': [dayjs().startOf('month'), dayjs().endOf('month')],
         '지난 달': [dayjs().subtract(1, 'month').startOf('month'), dayjs().subtract(1, 'month').endOf('month')]
     } : changed option, Used only as a function. It takes a dayjs object as a parameter.
-},
+  }
   
   ```
 
