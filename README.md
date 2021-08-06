@@ -8,11 +8,11 @@
 
 
 ## Intro
->jquery를 이용하여 개발된 daterangepicker를 사용(복제:clone) 하여 만들었습니다.   
+>jquery를 이용하여 개발된 daterangepicker를 사용(복제:clone) 하여 만들었습니다. (https://github.com/dangrossman/daterangepicker.git)      
 >jquery를 제거한 버전이며 몇가지 변경된 사항이 있으니 확인 후 사용하세요.   
 >
 >------------------------------------------------------------------------------------------------------------
->__I made it by cloning the daterangepicker developed using jquery.__   
+>__I made it by cloning the daterangepicker developed using jquery. (https://github.com/dangrossman/daterangepicker.git)__    
 __This is a version that has removed jquery, and there are some changes, so please use it after checking it.__
 
 
