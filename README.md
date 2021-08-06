@@ -20,6 +20,29 @@ a single date picker mode, a time picker, and predefined date ranges.
 
 http://www.pionnet.co.kr
 
+## Changes from Dan Grossman daterangepicker
+
+- Grossman daterangepicker:
+
+  ```bash
+  # npm 6.x
+  npm init vite@latest my-vue-app --template vue
+  # npm 7+, extra double-dash is needed:
+  npm init vite@latest my-vue-app -- --template vue
+  # yarn
+  yarn create vite my-vue-app --template vue
+  ```
+
+- hamonica daterangepicker:
+
+  ```bash
+  npm install -g @vue/cli # OR yarn global add @vue/cli
+  vue create hello-vue3
+  # select vue 3 preset
+  ```
+
+## Changes from Vue 2
+
 ## [Documentation and Live Usage Examples](http://www.daterangepicker.com)
 
 ## License
