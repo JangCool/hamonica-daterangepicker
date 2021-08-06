@@ -93,7 +93,7 @@ http://www.pionnet.co.kr
     //default settings for options
     parentEl: 'body',
     element: null,
-    theme: null,     //setDTheme(''|'dark')
+    theme: null,     //setTheme(''|'dark')
     darkMode: false, //setDarkMode(true|false)
     startDate: null,
     endDate: null,
