@@ -48,7 +48,6 @@ http://www.pionnet.co.kr
   showCalendars : added option.
   showRanges : added option, left ranges show/hide.
   ranges: (dayjs) => {
-
     return {
         'Today': [dayjs(), dayjs()],
         'Yesterday': [dayjs().subtract(1, 'days'), dayjs().subtract(1, 'days')],
@@ -56,7 +55,7 @@ http://www.pionnet.co.kr
         '30일 전': [dayjs().subtract(29, 'days'), dayjs()],
         '이번 달': [dayjs().startOf('month'), dayjs().endOf('month')],
         '지난 달': [dayjs().subtract(1, 'month').startOf('month'), dayjs().subtract(1, 'month').endOf('month')]
-    } : changed option, Used only as a function. It takes a dayjs object as a parameter.
+    } : ***changed option, Used only as a function. It takes a dayjs object as a parameter.***
 },
   
   ```
