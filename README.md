@@ -2,9 +2,11 @@
 
 ![image](https://user-images.githubusercontent.com/2518021/128446475-f3c5e941-05a4-4960-923e-8ec047e3659d.png)
 
->jquery daterangepicker를 이용하여 만들었습니다. jquery를 제거한 버전이고 몇가지 변경된 사항이 있으니 확인 후 사용하세요.
->__I made it using daterangepicker and there are some changes.__   
-__Please check the difference when using it.__
+>jquery를 이용하여 개발된 daterangepicker를 fork 하여 만들었습니다.   
+>jquery를 제거한 버전이며 몇가지 변경된 사항이 있으니 확인 후 사용하세요.   
+>------------------------------------------------------------------------------------------------------------
+>__I made it by cloning the daterangepicker developed using jquery.__   
+__This is a version that has removed jquery, and there are some changes, so please use it after checking it.__
 
 
 This date range picker component creates a dropdown menu from which a user can
