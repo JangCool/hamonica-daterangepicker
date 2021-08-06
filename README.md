@@ -85,7 +85,7 @@ http://www.pionnet.co.kr
   );
 ```
 
-## Options
+## Options - dateRangePicker(element, options) 
 
   ```bash
 {
