@@ -1,6 +1,6 @@
 # Hamonica Date Range Picker
 
-![image](https://user-images.githubusercontent.com/2518021/128446397-deaf4a66-0792-4b04-b44d-c54ad9fb223f.png)
+![image](https://user-images.githubusercontent.com/2518021/128446475-f3c5e941-05a4-4960-923e-8ec047e3659d.png)
 
 This date range picker component creates a dropdown menu from which a user can
 select a range of dates. I created it while building the UI for [Improvely](http://www.improvely.com), 
