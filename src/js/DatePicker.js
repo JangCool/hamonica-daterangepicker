@@ -439,10 +439,10 @@ class DatePicker {
         }
     
         if (typeof options.applyClass === 'string'){ //backwards compat
-            this.#options.applyButtonClasses = options.applyClass;
+            this.#options.applyButtonClasses = options.applyClass ||'';
         }
         if (typeof options.cancelClass === 'string') { //backwards compat
-            this.#options.cancelButtonClasses = options.cancelClass;
+            this.#options.cancelButtonClasses = options.cancelClass ||'';
         }
 
         if (typeof options.buttonClasses === 'object') {
@@ -1392,7 +1392,7 @@ class DatePicker {
         if (this.#options.singleDatePicker || (this.#options.endDate && (this.#options.startDate.isBefore(this.#options.endDate) || this.#options.startDate.isSame(this.#options.endDate)))) {
             this.#container.querySelector('button.btn.apply').disabled = false;
         } else {
-            this.#container.querySelector('button.btn.cancel').disabled = true;
+            this.#container.querySelector('button.btn.apply').disabled = true;
         }
 
     }

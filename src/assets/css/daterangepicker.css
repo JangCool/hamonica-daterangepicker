@@ -407,6 +407,12 @@
     transform: translateY(1px);
 }
 
+.daterangepicker .drp-buttons .btn:disabled {
+    background: #eee !important;
+    color: #cacaca !important;
+    border: #ebebeb 1px solid !important;
+}
+
 .daterangepicker .drp-buttons .btn:hover {
     opacity: 0.8;
 }
