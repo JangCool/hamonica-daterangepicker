@@ -23,7 +23,6 @@ which needed a way to select date ranges for dahboard or report.
 Features include limiting the selectable date range, localizable strings and date formats,
 a single date picker mode, a time picker, and predefined date ranges.
 
-http://www.pionnet.co.kr
 
 ## Build and Run Server (npm)
 
