@@ -15,13 +15,13 @@ export default {
     maxSpan: false,
     autoApply: false,
     singleDatePicker: false,
-    showMonthAndYearDropdowns: true,
+    showMonthAndYearDropdowns: false,
     minYear: null,
     maxYear: null,
     showWeekNumbers: false,
     showISOWeekNumbers: false,
     showCustomRangeLabel: true,
-    timePicker: true,
+    timePicker: false,
     timePicker24Hour: true,
     timePickerIncrement: 1,
     timePickerSeconds: true,
@@ -29,7 +29,7 @@ export default {
     autoUpdateInput: true,
     alwaysShowCalendars : false,
     showCalendars: true,
-    showRanges : true,
+    showRanges : false,
     ranges : {},
     locale: null,
    
@@ -51,12 +51,6 @@ export default {
     callback: function() { console.log('Hamonica DateRangePicker callback ... ') ;},
 
     events: {
-        /**
-         * 달력과 관련없는 외부 영역을 클릭했을 경우 호출.
-         * 
-         * @param {Event} e 
-         * @param {DatePicker} picker 
-         */
         outsideClick: function(e, picker){
             console.log("outsideClick ",e, picker);
         },
@@ -66,11 +60,11 @@ export default {
         clickCancel: function(e, picker){
             console.log("clickCancel ",e, picker);
         },
-        show: function(e, picker){
-            console.log("show ",e, picker);
+        show: function(picker){
+            console.log("show ", picker);
         },
-        hide: function(e, picker){
-            console.log("hide ",e, picker);
+        hide: function(picker){
+            console.log("hide ", picker);
         },
         showCalendars: function(e, picker){
             console.log("showCalendar ",e, picker);

@@ -239,6 +239,14 @@ class DatePicker {
         return this.#rightCalendar;
     }
     
+    getStartDate = () => {
+        return this.#options.startDate.toDate();
+    }
+
+    getEndDate = () => {
+        return this.#options.endDate.toDate();
+    }
+
     getOldStartDate = () => {
         return this.#oldStartDate;
     }
@@ -458,6 +466,20 @@ class DatePicker {
                 })(this.#options)
             }
         );
+
+        if(
+            (typeof(this.#options.startDate) == 'number') || 
+            (this.#options.startDate instanceof Date) 
+        ){
+            this.#options.startDate = dayjs(this.#options.startDate);
+        }
+        
+        if(
+            (typeof(this.#options.endDate) == 'number') || 
+            (this.#options.endDate instanceof Date) 
+        ){
+            this.#options.endDate = dayjs(this.#options.endDate);
+        }
 
         // handle all the possible options overriding defaults
         if (typeof options.locale.customRangeLabel === 'string'){
@@ -739,6 +761,11 @@ class DatePicker {
 
     setStartDate = (startDate) => {
 
+        //milisecond, Date 객체 유형을 dayjs 객체로 변환.
+        if( (typeof(startDate) == 'number') || (startDate instanceof Date) ){
+            startDate = dayjs(this.#options.startDate);
+        }
+        
         let dayjs = this.#dayjs;
 
         util.date.setDate( dayjs, this.#options, this.#locale, 'startDate', startDate);
@@ -768,6 +795,11 @@ class DatePicker {
     }
 
     setEndDate = (endDate) => {
+
+        //milisecond, Date 객체 유형을 dayjs 객체로 변환.
+        if( (typeof(endDate) == 'number') || (endDate instanceof Date) ){
+            endDate = dayjs(endDate);
+        }
 
         let dayjs = this.#dayjs;
 
@@ -807,14 +839,21 @@ class DatePicker {
             this.renderTimePicker('left');
             this.renderTimePicker('right');
 
-            let calendarTimeSelect = this.#container.querySelector('.right .calendar-time select');
+            let calendarTimeSelect = this.#container.querySelectorAll('.right .calendar-time select');
 
             if (!options.endDate) {
-                calendarTimeSelect.disabled = true;
-                calendarTimeSelect.classList.add('disabled');
+
+                calendarTimeSelect.forEach((element) => {
+                    element.disabled = true;
+                    element.classList.add('disabled');
+                });
+                
             } else {
-                calendarTimeSelect.disabled = false;
-                calendarTimeSelect.classList.remove('disabled');
+
+                calendarTimeSelect.forEach((element) => {
+                    element.disabled = false;
+                    element.classList.remove('disabled');
+                });
             }
         }
         if (this.#options.endDate){
@@ -1700,7 +1739,7 @@ class DatePicker {
 
     }
 
-    show = (e) => {
+    show = () => {
         if (this.#isShowing) return;
 
         this.#oldStartDate = this.#options.startDate.clone();
@@ -1710,11 +1749,11 @@ class DatePicker {
         this.updateView();
         show(this.#container);
         this.#move();
-        this.getOptions().events.show(e, this);
+        this.getOptions().events.show(this);
         this.#isShowing = true;
     }
 
-    hide = (e) => {
+    hide = () => {
 
         if (!this.#isShowing) return;
 
@@ -1735,7 +1774,7 @@ class DatePicker {
         window.off('resize.daterangepicker');
 
         hide(this.#container);
-        this.getOptions().events.hide(e, this);
+        this.getOptions().events.hide(this);
         this.#isShowing = false;
     }
 

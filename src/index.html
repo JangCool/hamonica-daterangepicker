@@ -14,6 +14,8 @@
     </script>
 
     <input id="datetime" style="margin-left: 300px;width:200px;font-size: 11px;">
+    <button id="show" onclick="datetime.show()">보이기</button>
+    <button id="hide" onclick="datetime.hide()">숨기기</button>
 
     <button id="datetime2" style="margin-left: 300px">달력</button>
 
@@ -25,10 +27,13 @@
         //dayjs 객체.
         // let dayjs = getDayjsOnDateRangePicker();
 
-        const datetime = dateRangePicker(
+        const datetime = window.datetime = dateRangePicker(
             document.querySelector("#datetime"),
             {
                 darkMode: true,
+                startDate: 1628247535927,
+                endDate: new Date(),
+                timePicker: true,
                 singleDatePicker: false,
                 events: {
                     outsideClick: (e, picker) => {
@@ -44,8 +49,11 @@
             }
         );
 
+        console.log(datetime )
+        console.log(datetime.getStartDate(), datetime.getEndDate(), )
+
         const datetime2 = dateRangePicker(
-            document.querySelector("#datetime2"),
+            "#datetime2",
             {
                 drops: 'down',
                 opens: 'right',

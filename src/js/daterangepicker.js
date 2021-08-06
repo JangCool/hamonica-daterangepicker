@@ -92,6 +92,46 @@ class DateRangePicker {
         }
     }
 
+    setTheme = (theme) => {
+        this.#datePicker.setTheme(theme);
+    }
+
+    setDarkMode = (isDarkMode) => {
+        this.#datePicker.setDarkMode(isDarkMode);
+    }
+
+    setStartDate = (datetime) => {
+        return this.#datePicker.setStartDate(datetime);
+    }
+
+    setEndDate = (datetime) => {
+        return this.#datePicker.setEndDate(datetime);
+    }
+
+    getStartDate = () => {
+        return this.#datePicker.getStartDate();
+    }
+
+    getEndDate = () => {
+        return this.#datePicker.getEndDate();
+    }
+
+    getElement = () => {
+        return this.#datePicker.getElement();
+    }
+
+    getDayjs = () => {
+        return this.#datePicker.getDayjs();
+    }
+
+    show = () => {
+        return this.#datePicker.show();
+    }
+
+    hide = () => {
+        return this.#datePicker.hide();
+    }
+
     remove = () => {
         this.#datePicker.remove();
     }

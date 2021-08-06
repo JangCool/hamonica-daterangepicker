@@ -24,54 +24,19 @@ dayjs.extend(arraySupport)
  * @param {*} options 옵션
  * @param {*} cb 콜백
  */
-class HamonicaDateRangePicker {
-
-    #elems = [];
-    #length;
-
-    constructor(element, options, cb){
-
-        this.#initElement(element, options, cb);
-    }
-
-    #initElement(element, options, cb) {
-
-        //날짜 객체 임시 보관.
-        let tempElems = null;
-
-        //문자열일 경우에 querySelectorAll 함수를 이용하여 반환.
-        if(typeof element == "string"){
-            tempElems = document.querySelectorAll(element);
-        }
-
-        if(element instanceof HTMLInputElement || element instanceof HTMLButtonElement ){
-            this.#elems.push(new DateRangePicker(dayjs, element, options, cb));
-        } else{
-            //날짜 객체 보관함에 등록.
-            tempElems.forEach(element => {
-                this.#elems.push(new DateRangePicker(dayjs, element, options, cb));
-            });
-        }
-
-        this.#length = this.#elems.length;
-    }
-
-    remove = () => {
-
-        this.#elems.forEach(element => {
-            element.remove();
-        });
-    }
-
-};
 
 const dateRangePicker = (element, options, cb) => {
-    return new HamonicaDateRangePicker(element, options, cb);
+
+    //문자열일 경우에 querySelectorAll 함수를 이용하여 반환.
+    if(typeof element == "string"){
+        element = document.querySelector(element);
+        console.warn("Select only one element. When multiple elements are selected, they are applied to the first element.");
+    }
+            
+    return new DateRangePicker(dayjs, element, options, cb);
 }
 
-const getDayjsOnDateRangePicker = () => dayjs;
 
 export {
-    dateRangePicker,
-    getDayjsOnDateRangePicker
+    dateRangePicker
 } 
