@@ -61,6 +61,11 @@ http://www.pionnet.co.kr
 
 ## [Documentation and Live Usage Examples](http://www.daterangepicker.com)
 
+## Thanks to
+- [Lodash](https://lodash.com/)
+- [day.js](https://day.js.org/)
+- and other support...
+
 ## License
 
 ***I checked Dan Grossman MIT license at the time of cloning and keep it the same.***   
