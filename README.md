@@ -34,7 +34,7 @@ http://www.pionnet.co.kr
 
 ## Changes from Hamonica daterangepicker
 
-- daterangepicker options(Dan Grossman):
+- daterangepicker options (Dan Grossman):
 
   ```bash
   showDropdowns : removed option and added showMonthAndYearDropdowns
