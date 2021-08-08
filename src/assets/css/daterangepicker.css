@@ -390,14 +390,17 @@
 }
 
 .daterangepicker .drp-buttons .btn {
-    border-radius: 3px;
-    -webkit-border-radius: 3px;
-    margin-left: 4px;
-    font-size: 12px;
+    border-radius: 3px !important;
+    -webkit-border-radius: 3px !important;
+    margin-left: 4px !important;
+    font-size: 12px !important;
     /* font-weight: bold; */
-    padding: 8px 12px;
-    -webkit-appearance: none;
-    appearance: none;
+    padding: 8px 12px !important;
+    -webkit-appearance: none !important;
+    appearance: none !important;
+    display: inline !important;
+    line-height: initial !important;
+    height: auto !important;
 }
 
 .daterangepicker .drp-buttons .btn:active {

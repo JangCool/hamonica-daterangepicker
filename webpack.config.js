@@ -26,6 +26,7 @@ module.exports = {
     path: path.resolve(__dirname, "dist"),
     // this places all images processed in an image folder
     assetModuleFilename: "images/[hash][ext][query]",
+    libraryTarget: 'umd'
   },
 
   plugins: [
