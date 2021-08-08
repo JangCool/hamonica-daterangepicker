@@ -101,7 +101,6 @@ import '@/assets/css/daterangepicker/daterangepicker.min.css'
       }
  );
 
-
 ```
 
 ## Options - dateRangePicker(element, options) 
