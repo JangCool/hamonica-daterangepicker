@@ -65,8 +65,11 @@ a single date picker mode, a time picker, and predefined date ranges.
   
   ```
   
-- Create daterangepicker:
+- Create daterangepicker (script tag):
 ```
+<script src="daterangepicker.min.js"></script>
+<link href="daterangepicker.min.css" rel="stylesheet">
+
   const datetime = dateRangePicker(
       document.querySelector("#datetime"),
       {
@@ -86,10 +89,18 @@ a single date picker mode, a time picker, and predefined date ranges.
   );
 ```
 
--Create daterangepicker (es6 module):
+- Create daterangepicker (es6 module):
 ```
 import { dateRangePicker } from '@/assets/js/daterangepicker/daterangepicker.min.js'
 import '@/assets/css/daterangepicker/daterangepicker.min.css'
+
+ const datetime = dateRangePicker(
+      document.querySelector("#datetime"),
+      {
+          ...
+      }
+ );
+
 
 ```
 
