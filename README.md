@@ -86,6 +86,13 @@ a single date picker mode, a time picker, and predefined date ranges.
   );
 ```
 
+-Create daterangepicker (es6 module):
+```
+import { dateRangePicker } from '@/assets/js/daterangepicker/daterangepicker.min.js'
+import '@/assets/css/daterangepicker/daterangepicker.min.css'
+
+```
+
 ## Options - dateRangePicker(element, options) 
 
   ```bash
