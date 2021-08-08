@@ -49,6 +49,6 @@
   },
   "dependencies": {
     "dayjs": "^1.10.6",
-    "lodash": "^4.17.21"
+    "lodash.merge": "^4.6.2"
   }
 }

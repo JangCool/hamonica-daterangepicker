@@ -1,5 +1,4 @@
 import DateRangePicker from './DateRangePicker';
-import './DatePickerEvent'
 
 import dayjs from 'dayjs';
 import "dayjs/locale/ko";

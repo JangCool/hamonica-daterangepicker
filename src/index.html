@@ -14,20 +14,32 @@
     </script>
 
     <input id="datetime" style="margin-left: 300px;width:200px;font-size: 11px;">
-    <button id="show" onclick="datetime.show()">보이기</button>
+    <button id="show" onclick="event.stopPropagation(); datetime.show()">보이기</button>
     <button id="hide" onclick="datetime.hide()">숨기기</button>
+    <button id="hide" onclick="remove()">제거</button>
 
     <button id="datetime2" style="margin-left: 300px">달력</button>
+    <button id="hide" onclick="remove()">제거</button>
 
     <script>
 
+let datetime = null;
+let datetime2 = null;
+
+    function remove(){
+        datetime.remove();
+        datetime2.remove();
+        datetime = null;
+        delete window.datetime;
+    }
+    
     window.addEventListener('DOMContentLoaded', (event) => {
         console.log('DOM fully loaded and parsed');
     
         //dayjs 객체.
         // let dayjs = getDayjsOnDateRangePicker();
 
-        const datetime = window.datetime = dateRangePicker(
+        datetime = dateRangePicker(
             document.querySelector("#datetime"),
             {
                 darkMode: true,
@@ -49,10 +61,13 @@
             }
         );
 
+
+  
+
         console.log(datetime )
         console.log(datetime.getStartDate(), datetime.getEndDate(), )
 
-        const datetime2 = dateRangePicker(
+        datetime2 = dateRangePicker(
             "#datetime2",
             {
                 drops: 'down',

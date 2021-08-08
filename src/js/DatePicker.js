@@ -1,9 +1,26 @@
 import defaulOptions from './options/default.options';
 import localeOptions from './options/default.locale';
-import { isEmpty, merge } from 'lodash';
-import util from './util/util.date';
+import util from './util/util';
 import { hide, show, getOffset, css, matches } from './functions/functions';
+import merge from 'lodash.merge';
 
+// # see : https://stackoverflow.com/questions/34459805/remove-event-listener-if-i-know-only-element-and-event
+function addEventListener(element, type, listener, useCapture){
+
+    if (!element.myEvents) element.myEvents = {};
+    if (!element.myEvents[type]) element.myEvents[type] = [];
+
+    element.myEvents[type].push(listener);
+
+    element.addEventListener(type, listener, useCapture || false);
+}
+
+function removeAllEventListener(element, type){
+
+    element.myEvents[type].forEach(function(listener) {
+        element.removeEventListener(type, listener);
+    });
+}
 
 //제공하는 테마 목록 정의.
 const themeList = ['dark'];
@@ -51,8 +68,6 @@ class DatePicker {
 
     #previousRightTime;
 
-    #outsideClickProxy;
-
     #oldStartDate;
 
     #oldEndDate;
@@ -72,70 +87,71 @@ class DatePicker {
 
         let self = this;
 
-        this.#move();
+        this.move();
 
-        window.on("resize.daterangepicker", (e) => {
-            self.#move(e);
+        addEventListener(window, 'resize', (e) => {
+            self.move(e);
         })
 
         // Create a click proxy that is private to this instance of datepicker, for unbinding
-        this.#outsideClickProxy = function(e) { self.outsideClick.call(self, e); };
+        let outsideClickProxy = function(e) { self.outsideClick.call(self, e); };
 
         // Bind global datepicker mousedown for hiding and
-        document
-            .on('mousedown.daterangepicker', this.#outsideClickProxy)
-            // also support mobile devices
-            .on('touchend.daterangepicker', this.#outsideClickProxy)
-            // and also close when focus changes to outside the picker (eg. tabbing between controls)
-            .on('focusin.daterangepicker', this.#outsideClickProxy);
+        addEventListener(document, 'click', outsideClickProxy);
+        addEventListener(document, 'mounsedown', outsideClickProxy);
+        addEventListener(document, 'touchend', outsideClickProxy);
+        addEventListener(document, 'focusin', outsideClickProxy);
         
         if (this.#element.tagName.toLowerCase() == 'input'|| this.#element.tagName.toLowerCase() == 'button') {
-            this.#element
-                .on('click.daterangepicker', function(e) { self.show.call(self, e); })
-                .on('focus.daterangepicker', function(e) { self.show.call(self, e); })
-                .on('keyup.daterangepicker', function(e) { self.elementChanged.call(self, e); })
-                .on('keydown.daterangepicker', function(e) { self.keydown.call(self, e); })
+
+            addEventListener(this.#element, 'click', function(e) { self.show.call(self, e); });
+            addEventListener(this.#element, 'focus', function(e) { self.show.call(self, e); });
+            addEventListener(this.#element, 'keyup', function(e) { self.elementChanged.call(self, e); });
+            addEventListener(this.#element, 'keydown', function(e) { self.keydown.call(self, e); });
+            
    
         } else {
-            this.#element
-                .on('click.daterangepicker', function(e) { self.toggle.call(self, e); })
-                .on('keydown.daterangepicker', function(e) { self.toggle.call(self, e); });
+            addEventListener(this.#element, 'click', function(e) { self.toggle.call(self, e); });
+            addEventListener(this.#element, 'keydown', function(e) { self.toggle.call(self, e); });
         }
-    
 
-        document.on("click",function(e){
 
-           let nodeList = this.querySelectorAll('[data-toggle=dropdown]');
+        addEventListener(document, 'on', function(e) {
 
-           if(!nodeList){
-                return;
-           }
+            let nodeList = this.querySelectorAll('[data-toggle=dropdown]');
 
-           nodeList.forEach(dropdown => {
-               // also explicitly play nice with Bootstrap dropdowns, which stopPropagation when clicking them
-               dropdown.on('click.daterangepicker', this.#outsideClickProxy);
-                
-           });
+            if(!nodeList){
+                 return;
+            }
+ 
+            nodeList.forEach(dropdown => {
+                // also explicitly play nice with Bootstrap dropdowns, which stopPropagation when clicking them
 
+                addEventListener(dropdown,'click', outsideClickProxy);
+                 
+            });
+            
         });
+
+
 
         const dynamicOn = (selector, eventName, callback) => {
 
             let elements = this.#container.querySelectorAll(selector);
 
             elements.forEach((element) => {
-                element.on(eventName, function(e){
+                addEventListener(element, eventName, function(e){
                     callback(e);
-                 });
+                 })
             });
         }
 
-        dynamicOn('.ranges', 'click.daterangepicker', (e) => {
+        dynamicOn('.ranges', 'click', (e) => {
             if (e.target.closest("li")) {
                 self.clickRange.call(self, e);
             }
          });
-        dynamicOn('.drp-calendar', 'click.daterangepicker', (e) => {
+        dynamicOn('.drp-calendar', 'click', (e) => {
 
             if (e.target.closest(".prev")) {
                 self.clickPrev.call(self, e);
@@ -145,17 +161,17 @@ class DatePicker {
                 self.clickNext.call(self, e);
             }
          });
-        dynamicOn('.drp-calendar', 'mousedown.daterangepicker', (e) => {
+        dynamicOn('.drp-calendar', 'mousedown', (e) => {
             if (e.target.matches("td.available")) {
                 self.clickDate.call(self, e);
             }
         });
-        dynamicOn('.drp-calendar', 'mouseenter.daterangepicker', (e) => {
+        dynamicOn('.drp-calendar', 'mouseenter', (e) => {
             if (e.target.matches("td.available")) {
                 self.hoverDate.call(self, e);
             }
         });
-        dynamicOn('.drp-calendar', 'change.daterangepicker', (e) => {
+        dynamicOn('.drp-calendar', 'change', (e) => {
             if (e.target.matches("select.yearselect")) {
                 self.monthOrYearChanged.call(self, e);
             }
@@ -163,7 +179,7 @@ class DatePicker {
                 self.monthOrYearChanged.call(self, e);
             }
         });
-        dynamicOn('.drp-calendar', 'change.daterangepicker', (e) => {
+        dynamicOn('.drp-calendar', 'change', (e) => {
             if (
                 e.target.matches("select.hourselect") ||
                 e.target.matches("select.minuteselect") ||
@@ -173,7 +189,7 @@ class DatePicker {
                 self.timeChanged.call(self, e);
             }
         });
-        dynamicOn('.drp-calendar', 'click.daterangepicker', (e) => {
+        dynamicOn('.drp-calendar', 'click', (e) => {
             if (e.target.matches("li.month > button")) {
                 self.clickMonthSelection.call(self, e);
             }
@@ -186,11 +202,8 @@ class DatePicker {
         
         let drpbuttons = this.#container.querySelector('.drp-buttons');
 
-        drpbuttons.querySelector('button.btn.apply')
-            .on('click.daterangepicker', function(e) { self.clickApply.call(self, e); });
-        drpbuttons.querySelector('button.btn.cancel')
-            .on('click.daterangepicker', function(e) { self.clickCancel.call(self, e); });
-
+        addEventListener(drpbuttons.querySelector('button.btn.apply'), 'click', function(e) { self.clickApply.call(self, e); });
+        addEventListener(drpbuttons.querySelector('button.btn.cancel'), 'click', function(e) { self.clickCancel.call(self, e); });
 
         //엘리먼트 업데이트
         this.updateElement();
@@ -284,7 +297,7 @@ class DatePicker {
     #initContainer = () => {
 
          //html template for the picker UI
-        if (isEmpty(this.#options.template)){
+        if (util.text.isBlank(this.#options.template)){
             this.#options.template =
                 `<div class="hamonica daterangepicker">
                     <div class="ranges"></div>
@@ -410,10 +423,8 @@ class DatePicker {
         }
         //국제화처리.
         this.#dayjs.locale(options.locale.i18n || 'en');
-
         this.#options = merge(
             merge({}, defaulOptions),
-            defaulOptions,
             {
                 startDate: dayjs().startOf('day'),
                 endDate: dayjs().endOf('day'),
@@ -537,7 +548,9 @@ class DatePicker {
     /**
      * 컨테이너 위치 조정.
      */
-    #move = () => {
+    move = () => {
+       
+        console.log('###')
         var parentOffset = { top: 0, left: 0 },
             containerTop,
             drops = this.#options.drops;
@@ -753,10 +766,27 @@ class DatePicker {
         }
     }
 
-    remove = () => {
+    remove = function() {
+
+        // Bind global datepicker mousedown for hiding and
+        removeAllEventListener(this.#element, 'click');
+        removeAllEventListener(this.#element, 'focus');
+        removeAllEventListener(this.#element, 'keyup');
+        removeAllEventListener(this.#element, 'keydown');
+
+        removeAllEventListener(document, 'click');
+        removeAllEventListener(document, 'mounsedown');
+        removeAllEventListener(document, 'touchend');
+        removeAllEventListener(document, 'focusin');
+        removeAllEventListener(window, 'resize');
+
         this.#container.remove();
-        this.#element.off('.daterangepicker');
-        this.#element.removeData();
+        
+        // 사용하는 곳이 없는데?.... 나중에 제거.., original : this.element.removeData();
+        var dataset = this.#element.dataset;
+        for (var key in dataset) {
+            delete dataset[key]
+        }
     }
 
     setStartDate = (startDate) => {
@@ -1475,7 +1505,7 @@ class DatePicker {
         }
 
         this.#container.classList.add('show-calendar');
-        this.#move();
+        this.move();
         this.getOptions().events.showCalendars(this);
     }
 
@@ -1740,7 +1770,11 @@ class DatePicker {
     }
 
     show = () => {
+
+        console.log("this.#isShowing ",this.#isShowing)
+
         if (this.#isShowing) return;
+        this.#isShowing = true;
 
         this.#oldStartDate = this.#options.startDate.clone();
         this.#oldEndDate = this.#options.endDate.clone();
@@ -1748,9 +1782,8 @@ class DatePicker {
 
         this.updateView();
         show(this.#container);
-        this.#move();
+        this.move();
         this.getOptions().events.show(this);
-        this.#isShowing = true;
     }
 
     hide = () => {
@@ -1770,9 +1803,8 @@ class DatePicker {
         //if picker is attached to a text input, update it
         this.updateElement();
 
+        removeAllEventListener(window, 'resize');
     
-        window.off('resize.daterangepicker');
-
         hide(this.#container);
         this.getOptions().events.hide(this);
         this.#isShowing = false;
@@ -1789,11 +1821,12 @@ class DatePicker {
 
     outsideClick = (e) => {
         var target = e.target;
-
+console.log("#### outsideClick")
         if (!this.#isShowing) return;
 
         // if the page is clicked anywhere except within the daterangerpicker/button
         // itself then call this.hide()
+        console.log(e)
         if (
             // ie modal dialog fix
             e.type == "focusin" ||

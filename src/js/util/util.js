@@ -1,6 +1,16 @@
 
 
 const util = {
+    text :{
+
+        isEmpty: function(str) {
+            return str == null || str == undefined || str == "";
+        },
+        
+        isBlank: function(str) {
+            return this.isEmpty(str) || !this.isEmpty(str) && str.trim().length == 0;
+        }
+    },
 
     date :{
 
