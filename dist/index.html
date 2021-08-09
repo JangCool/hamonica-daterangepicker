@@ -33,6 +33,10 @@ let datetime2 = null;
                         console.log("clickCancel ", e, picker);
                     }
                 }
+            },
+
+            function(start, end, label) {
+                console.log('New date range selected: ' + start.format('YYYY-MM-DD HH:mm:ss') + ' to ' + end.format('YYYY-MM-DD HH:mm:ss') + ' (predefined range: ' + label + ')');
             }
         );
 

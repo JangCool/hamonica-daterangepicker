@@ -359,6 +359,7 @@
 .daterangepicker select.ampmselect {
     width: 60px;
     margin: 0 auto;
+    display: initial;
 }
 
 .daterangepicker .calendar-time {

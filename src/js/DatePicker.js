@@ -74,6 +74,8 @@ class DatePicker {
 
     #chosenLabel;
 
+    #callback;
+
     constructor(dayjs, element, options, cb) {
         
         this.#dayjs = dayjs;
@@ -81,6 +83,8 @@ class DatePicker {
         this.#element = element;
 
         this.#element.classList.add('hamonica');
+
+        this.#callback = cb;
 
         this.#initOptions(options);
         this.updateElement();
@@ -1797,8 +1801,10 @@ class DatePicker {
         }
 
         //if a new date range was selected, invoke the user callback function
-        if (!this.#options.startDate.isSame(this.#oldStartDate) || !this.#options.endDate.isSame(this.#oldEndDate))
-            this.#options.callback(this.#options.startDate.clone(), this.#options.endDate.clone(), this.#chosenLabel);
+        if (!this.#options.startDate.isSame(this.#oldStartDate) || !this.#options.endDate.isSame(this.#oldEndDate)) {
+            if(typeof(this.#callback) == 'function')
+                this.#callback(this.#options.startDate.clone(), this.#options.endDate.clone(), this.#chosenLabel);
+        }
 
         //if picker is attached to a text input, update it
         this.updateElement();

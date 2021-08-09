@@ -48,8 +48,6 @@ export default {
         return false;
     },
 
-    callback: function() { console.log('Hamonica DateRangePicker callback ... ') ;},
-
     events: {
         outsideClick: function(e, picker){
             console.log("outsideClick ",e, picker);
