@@ -799,12 +799,12 @@ class DatePicker {
 
     setStartDate = (startDate) => {
 
+        let dayjs = this.#dayjs;
+
         //milisecond, Date 객체 유형을 dayjs 객체로 변환.
         if( (typeof(startDate) == 'number') || (startDate instanceof Date) ){
-            startDate = dayjs(this.#options.startDate);
+            startDate = dayjs(startDate || this.#options.startDate);
         }
-        
-        let dayjs = this.#dayjs;
 
         util.date.setDate( dayjs, this.#options, this.#locale, 'startDate', startDate);
 
@@ -834,12 +834,13 @@ class DatePicker {
 
     setEndDate = (endDate) => {
 
+        let dayjs = this.#dayjs;
+
         //milisecond, Date 객체 유형을 dayjs 객체로 변환.
         if( (typeof(endDate) == 'number') || (endDate instanceof Date) ){
-            endDate = dayjs(endDate);
+            endDate = dayjs(endDate || this.#options.endDate );
         }
 
-        let dayjs = this.#dayjs;
 
         util.date.setDate( dayjs, this.#options, this.#locale, 'endDate', endDate);
  

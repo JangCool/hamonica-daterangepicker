@@ -100,6 +100,10 @@ class DateRangePicker {
         this.#datePicker.setDarkMode(isDarkMode);
     }
 
+    getValueAsString = () => {
+        return this.#datePicker.getValueAsString();
+    }
+
     setStartDate = (datetime) => {
         return this.#datePicker.setStartDate(datetime);
     }

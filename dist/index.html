@@ -44,7 +44,13 @@ let datetime2 = null;
   
 
         console.log(datetime )
-        console.log(datetime.getStartDate(), datetime.getEndDate(), )
+        console.log(datetime.getStartDate(), datetime.getEndDate() )
+
+        setTimeout(()=>{
+
+            datetime.setStartDate(1628247535927)
+
+        }, 2000)
 
         datetime2 = dateRangePicker(
             "#datetime2",
