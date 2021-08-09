@@ -256,6 +256,10 @@ class DatePicker {
         return this.#rightCalendar;
     }
     
+    getValueAsString = () => {
+        return (this.#options.startDate.format(this.#locale.format) + this.#locale.separator + this.#options.endDate.format(this.#locale.format));
+    }
+
     getStartDate = () => {
         return this.#options.startDate.toDate();
     }
@@ -758,7 +762,7 @@ class DatePicker {
 
             var newValue =  this.#options.startDate.format(this.#locale.format);
             if (! this.#options.singleDatePicker) {
-                newValue += this.#locale.separator +  this.#options.endDate.format(this.#locale.format);
+                newValue = this.getValueAsString();
             }
             //신규 값과 Input 엘리먼트에 등록된 값이 다를 경우 change이벤트를 발생 시킨다.
             if (newValue !== this.#element.value) {
@@ -856,7 +860,7 @@ class DatePicker {
 
             this.#previousRightTime = this.#options.endDate.clone();
 
-        this.#container.querySelector('.drp-selected').innerHTML = (this.#options.startDate.format(this.#locale.format) + this.#locale.separator + this.#options.endDate.format(this.#locale.format));
+        this.#container.querySelector('.drp-selected').innerHTML = this.getValueAsString();
 
         if (!this.#isShowing)
             this.updateElement();
@@ -891,7 +895,7 @@ class DatePicker {
             }
         }
         if (this.#options.endDate){
-            this.#container.querySelector('.drp-selected').innerHTML = this.#options.startDate.format(this.#locale.format) + this.#locale.separator + this.#options.endDate.format(this.#locale.format);
+            this.#container.querySelector('.drp-selected').innerHTML = this.getValueAsString();
         }
 
         this.updateMonthsInView();
@@ -1803,7 +1807,7 @@ class DatePicker {
         //if a new date range was selected, invoke the user callback function
         if (!this.#options.startDate.isSame(this.#oldStartDate) || !this.#options.endDate.isSame(this.#oldEndDate)) {
             if(typeof(this.#callback) == 'function')
-                this.#callback(this.#options.startDate.clone(), this.#options.endDate.clone(), this.#chosenLabel);
+                this.#callback(this.getValueAsString(), this.#options.startDate.clone(), this.#options.endDate.clone(), this.#chosenLabel);
         }
 
         //if picker is attached to a text input, update it
