@@ -210,7 +210,7 @@ import '@/assets/css/daterangepicker/daterangepicker.min.css'
 
 The MIT License (MIT)
 
-Copyright (c) 2012-2021 JangCool
+Copyright (c) 2021 JangCool
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
