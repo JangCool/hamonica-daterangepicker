@@ -17,13 +17,13 @@
     line-height: 1em;
 }
 
-.daterangepicker:before,
+/* .daterangepicker:before,
 .daterangepicker:after {
     position: absolute;
     display: inline-block;
     border-bottom-color: rgba(0, 0, 0, 0.2);
     content: '';
-}
+} */
 
 .daterangepicker:before {
     top: -7px;
@@ -482,10 +482,27 @@
     color: #fff;
 }
 
+
+@media (max-width: 564px) {
+    .daterangepicker .drp-buttons .btn {
+        width: 100%;
+        margin-top: 5px !important;
+        margin-bottom: 5px !important;
+    }
+
+    .daterangepicker .drp-selected {
+        display: grid;
+        padding-right: 0;
+        align-items: center;
+        justify-items: center;
+        margin-bottom: 8px;
+    }
+}
+
 /*  Larger Screen Styling */
 @media (min-width: 564px) {
     .daterangepicker {
-        width: auto;
+        width: max-content;
     }
 
     .daterangepicker .ranges ul {

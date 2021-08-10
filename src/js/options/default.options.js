@@ -37,8 +37,8 @@ export default {
     applyButtonClasses: null,
     cancelButtonClasses: null,
 
-    opens: 'right',
-    drops: 'down',
+    opens: 'auto',
+    drops: 'auto',
 
     isInvalidDate: (p) => {
         return false;

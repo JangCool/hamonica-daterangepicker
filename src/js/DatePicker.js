@@ -91,8 +91,6 @@ class DatePicker {
 
         let self = this;
 
-        this.move();
-
         addEventListener(window, 'resize', (e) => {
             self.move(e);
         })
@@ -404,10 +402,6 @@ class DatePicker {
      */
     #initOpensAndDrops = () => {
 
-
-        this.#container.classList.add('opens' + this.#options.opens);
-
-
         if (this.#element.classList.contains('pull-right')){
             this.#options.opens = 'left';
         }
@@ -558,7 +552,6 @@ class DatePicker {
      */
     move = () => {
        
-        console.log('###')
         var parentOffset = { top: 0, left: 0 },
             containerTop,
             drops = this.#options.drops;
@@ -567,32 +560,34 @@ class DatePicker {
 
         if (!matches(this.#parentEl,'body')) {
 
-            let parentEloffset = getOffset(this.#parentEl);
+            // let parentEloffset = getOffset(this.#parentEl);
             parentOffset = {
-                top: parentEloffset.top - this.#parentEl.scrollTop,
-                left: parentEloffset.left - this.#parentEl.scrollLeft
+                top: this.#parentEl.offsetTop - this.#parentEl.scrollTop,
+                left: this.#parentEl.offsetLeft - this.#parentEl.scrollLeft
             };
-            parentRightEdge = this.#parentEl.clientWidth + parentEloffset.left;
+            parentRightEdge = this.#parentEl.clientWidth + this.#parentEl.offsetLeft;
         }
 
 
+        //get height to container
+        let containerOffsetHeight = this.#container.offsetHeight;
         let elementOffset = getOffset(this.#element);
 
         switch (drops) {
-        case 'auto':
-            containerTop = elementOffset.top + this.#element.offsetHeight - parentOffset.top;
-            if (containerTop + this.#container.offsetHeight >= this.#parentEl.scrollHeight) {
+            case 'auto':
+                containerTop = elementOffset.top + this.#element.offsetHeight - parentOffset.top;
+                if (containerTop + this.#container.offsetHeight >= this.#parentEl.scrollHeight) {
+                    containerTop = elementOffset.top - this.#container.offsetHeight - parentOffset.top;
+                    drops = 'up';
+                }
+                break;
+            case 'up':
                 containerTop = elementOffset.top - this.#container.offsetHeight - parentOffset.top;
-                drops = 'up';
+                break;
+            default:
+                containerTop = elementOffset.top + this.#element.offsetHeight - parentOffset.top;
+                break;
             }
-            break;
-        case 'up':
-            containerTop = elementOffset.top - this.#container.offsetHeight - parentOffset.top;
-            break;
-        default:
-            containerTop = elementOffset.top + this.#element.offsetHeight - parentOffset.top;
-            break;
-        }
 
         // Force the container to it's actual width
         css( this.#container, {
@@ -602,35 +597,52 @@ class DatePicker {
         });
 
         var containerWidth = this.#container.offsetWidth;
+        let containerClassList = this.#container.classList;
 
-       this.#container.classList.toggle('drop-up', drops == 'up' );
+        containerClassList.toggle('drop-up', drops == 'up' );
 
         let windowWidth = window.innerWidth;
 
-        if (this.#options.opens == 'left') {
-            var containerRight = parentRightEdge - elementOffset.left - this.#element.offsetWidth;
+        let opens = this.#options.opens;
 
+        if(this.#options.opens == 'auto'){
+            if( elementOffset.left + containerWidth > windowWidth) {
+                opens = 'left';
+
+            }else if(elementOffset.left + containerWidth < windowWidth) {
+                opens = 'right';
+            }
+        }
+
+        containerClassList.remove('opensleft','openscenter','opensright');
+        containerClassList.add('opens' + opens);
+
+        if (opens == 'left') {
+            var containerRight = parentRightEdge - elementOffset.left - this.#element.offsetWidth-15;
+
+            // console.log(parentRightEdge,  )
             if (containerWidth + containerRight > windowWidth) {
                 css( this.#container, {
                     top: containerTop+'px',
                     right: 'auto',
-                    left: 9+'px'
+                    left: 9
                 });
             } else {
+
                 css( this.#container, {
                     top: containerTop+'px',
                     right: containerRight+'px',
                     left: 'auto'
                 });
             }
-        } else if (this.opens == 'center') {
-            var containerLeft = elementOffset.left - parentOffset.left + this.#element.offsetWidth / 2
-                                    - containerWidth / 2;
+        } else if (opens == 'center') {
+            var containerLeft =  elementOffset.left - parentOffset.left + this.#element.offsetWidth / 2 - containerWidth / 2;
+
             if (containerLeft < 0) {
                 css( this.#container, {
                     top: containerTop+'px',
                     right: 'auto',
-                    left: 9+'px'
+                    left: 9
                 });
             } else if (containerLeft + containerWidth > windowWidth) {
                 css( this.#container, {
@@ -645,8 +657,8 @@ class DatePicker {
                     right: 'auto'
                 });
             }
-        } else {
-            var containerLeft = elementOffset.left - parentOffset.left;
+        } else if(opens == 'right') {
+            var containerLeft =  elementOffset.left - parentOffset.left;
             if (containerLeft + containerWidth > windowWidth) {
                 css( this.#container, {
                     top: containerTop+'px',
@@ -661,6 +673,7 @@ class DatePicker {
                 });
             }
         }
+
     }
 
 
@@ -1780,8 +1793,6 @@ class DatePicker {
 
     show = () => {
 
-        console.log("this.#isShowing ",this.#isShowing)
-
         if (this.#isShowing) return;
         this.#isShowing = true;
 
@@ -1832,12 +1843,10 @@ class DatePicker {
 
     outsideClick = (e) => {
         var target = e.target;
-console.log("#### outsideClick")
         if (!this.#isShowing) return;
 
         // if the page is clicked anywhere except within the daterangerpicker/button
         // itself then call this.hide()
-        console.log(e)
         if (
             // ie modal dialog fix
             e.type == "focusin" ||
