@@ -85,6 +85,9 @@ a single date picker mode, a time picker, and predefined date ranges.
                   console.log("clickCancel ", e, picker);
               }
           }
+      },
+      function(valueAsString, start, end, label) {
+
       }
   );
 ```
@@ -98,6 +101,9 @@ import '@/assets/css/daterangepicker/daterangepicker.min.css'
       document.querySelector("#datetime"),
       {
           ...
+      },
+      function(valueAsString, start, end, label) {
+
       }
  );
 ```
@@ -133,7 +139,7 @@ import '@/assets/css/daterangepicker/daterangepicker.min.css'
     autoUpdateInput: true,
     alwaysShowCalendars : false,
     showCalendars: true,
-    showRanges : true,
+    showRanges : false,
     ranges : {},
     locale: {
         i18n : 'en',
@@ -155,8 +161,8 @@ import '@/assets/css/daterangepicker/daterangepicker.min.css'
     applyButtonClasses: null,
     cancelButtonClasses: null,
 
-    opens: 'right',
-    drops: 'down',
+    opens: 'auto',
+    drops: 'auto',
 
     isInvalidDate: (p) => {
         return false;
@@ -165,8 +171,6 @@ import '@/assets/css/daterangepicker/daterangepicker.min.css'
     isCustomDate: (p) => {
         return false;
     },
-
-    callback: function() { console.log('Hamonica DateRangePicker callback ... ') ;},
 
     events: {
         outsideClick: function(e, picker){
