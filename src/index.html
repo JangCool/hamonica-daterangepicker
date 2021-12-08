@@ -56,6 +56,9 @@ let datetime3 = null;
                 timePicker: true,
                 singleDatePicker: false,
                 events: {
+                    startUp: (valueAsString, start, end) => {
+                        console.log('startup range selected: ' + valueAsString +', '+ start.format('YYYY-MM-DD HH:mm:ss') + ' to ' + end.format('YYYY-MM-DD HH:mm:ss'));
+                    },
                     outsideClick: (e, picker) => {
                         console.log("outsideClick ", e, picker);
                     },
@@ -68,8 +71,8 @@ let datetime3 = null;
                 }
             },
 
-            function(start, end, label) {
-                console.log('New date range selected: ' + start.format('YYYY-MM-DD HH:mm:ss') + ' to ' + end.format('YYYY-MM-DD HH:mm:ss') + ' (predefined range: ' + label + ')');
+            function(valueAsString, start, end, label) {
+                console.log('New date range selected: ' + valueAsString +', '+ start.format('YYYY-MM-DD HH:mm:ss') + ' to ' + end.format('YYYY-MM-DD HH:mm:ss') + ' (predefined range: ' + label + ')');
             }
         );
 

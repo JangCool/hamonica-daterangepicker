@@ -49,6 +49,9 @@ export default {
     },
 
     events: {
+        startUp: function(e, picker){
+            console.log("startUp ",e, picker);
+        },
         outsideClick: function(e, picker){
             console.log("outsideClick ",e, picker);
         },

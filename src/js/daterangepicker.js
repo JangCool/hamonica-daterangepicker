@@ -9,11 +9,12 @@ class DateRangePicker {
 
     /**
      * 
-     * @param {Element} element 대상 엘리먼트
+     * @param {Element} element 대상 엘리먼트s
      * @param {Object} options DateRangePicker 설정 값.
      * @param {Fuction} cb 콜백 함수 
      */
     constructor(dayjs, element, options, cb) {
+        //달력 시작시 호출.
 
         this.#datePicker = new DatePicker(dayjs, element, options, cb);
         this.#initRange();
@@ -64,6 +65,7 @@ class DateRangePicker {
             var rangeHtml = elem.value;
 
             this.#ranges[rangeHtml] = [start, end];
+
         }
 
 
@@ -90,6 +92,10 @@ class DateRangePicker {
         }else{
             hide(rangesElement)
         }
+
+        //달력 실행시 시작 함수 호출.
+        options.events.startUp(this.#datePicker.getValueAsString(), options.startDate.clone(), options.endDate.clone());
+
     }
 
     setTheme = (theme) => {

@@ -192,6 +192,8 @@ class DatePicker {
             }
         });
         dynamicOn('.drp-calendar', 'click', (e) => {
+            e.stopPropagation();
+            e.preventDefault();
             if (e.target.matches("li.month > button")) {
                 self.clickMonthSelection.call(self, e);
             }
@@ -209,7 +211,6 @@ class DatePicker {
 
         //엘리먼트 업데이트
         this.updateElement();
-
 
     }
 
@@ -1614,6 +1615,10 @@ class DatePicker {
 
 
     clickPrev = (e) => {
+
+        e.stopPropagation();
+        e.preventDefault();
+
         var cal = e.target.closest('.drp-calendar');
         let side = e.target.closest('.drp-calendar.left') ? 'left' : 'right';
 
@@ -1643,6 +1648,10 @@ class DatePicker {
     }
 
     clickNext = (e) => {
+
+        e.stopPropagation();
+        e.preventDefault();
+
         var cal = e.target.closest('.drp-calendar');
         let side = e.target.closest('.drp-calendar.left') ? 'left' : 'right';
 
