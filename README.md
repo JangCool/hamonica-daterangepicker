@@ -173,6 +173,9 @@ import '@/assets/css/daterangepicker/daterangepicker.min.css'
     },
 
     events: {
+        startUp: (valueAsString, start, end) => {
+            console.log('startup range selected: ' + valueAsString +', '+ start.format('YYYY-MM-DD HH:mm:ss') + ' to ' + end.format('YYYY-MM-DD HH:mm:ss'));
+        },
         outsideClick: function(e, picker){
             console.log("outsideClick ",e, picker);
         },
