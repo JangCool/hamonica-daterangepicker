@@ -92,6 +92,9 @@ class DateRangePicker {
         }else{
             hide(rangesElement)
         }
+        
+        //최초 날짜 데이터 설정.
+        this.#datePicker.setInitialDate(options.startDate.clone(), options.endDate.clone());
 
         //달력 실행시 시작 함수 호출.
         options.events.startUp(this.#datePicker.getValueAsString(), options.startDate.clone(), options.endDate.clone());
@@ -144,6 +147,10 @@ class DateRangePicker {
 
     remove = () => {
         this.#datePicker.remove();
+    }
+
+    reset = () => {
+        this.#datePicker.reset();
     }
 };
 

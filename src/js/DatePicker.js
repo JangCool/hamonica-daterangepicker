@@ -68,6 +68,10 @@ class DatePicker {
 
     #previousRightTime;
 
+    #initialStartDate;
+
+    #initialEndDate;
+
     #oldStartDate;
 
     #oldEndDate;
@@ -299,6 +303,11 @@ class DatePicker {
             classList.remove(themeList);
             classList.add(theme);
         }
+    }
+
+    setInitialDate(startDate, endDate) {
+        this.#initialStartDate = startDate;
+        this.#initialEndDate = endDate;
     }
     
     #initContainer = () => {
@@ -1841,6 +1850,13 @@ class DatePicker {
         this.#isShowing = false;
     }
 
+    reset = () => {
+
+        this.getOptions().startDate = this.#initialStartDate;
+        this.getOptions().endDate = this.#initialEndDate;
+
+        this.getElement().value = this.getValueAsString();
+    }
 
     toggle = (e) => {
         if (this.#isShowing) {
